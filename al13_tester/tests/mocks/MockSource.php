@@ -172,6 +172,12 @@ class MockSource extends \lithium\data\Source {
 		return array();
 	}
 
+	/**
+	 * Set source to use Document
+	 *
+	 * @param $class
+	 * @return void
+	 */
 	public function configureClass($class) {
 		return array(
 			'classes' => array(
