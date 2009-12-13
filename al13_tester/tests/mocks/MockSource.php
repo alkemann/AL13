@@ -112,7 +112,7 @@ class MockSource extends \lithium\data\Source {
 		if ($key === false) {
 			return false;
 		}
-		if ($key == sizeof($this->__data[$source])-1) {
+		if ($this->__data[$source][$key] == end($this->__data[$source])) {
 			unset($this->__data[$source][$key]);
 		} else {
 			$this->__data[$source][$key] = array_pop($this->__data[$source]);

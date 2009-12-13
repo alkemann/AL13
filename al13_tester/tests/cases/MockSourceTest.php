@@ -112,6 +112,18 @@ class MockSourceTest extends \lithium\test\Unit {
 		$deleted = MockCar::find(3);
 		$this->assertNull($deleted);
 	}
+
+	public function testPostDelete() {
+		Connections::get('mock-source')->fixtures(MockPost::meta('source'), MockPost::fixtures());
+
+		$this->assertTrue(MockPost::find(1)->delete());
+		$this->assertTrue(MockPost::find(3)->delete());
+
+		$posts = MockPost::find('all');
+		$result = $posts->data();
+		$this->assertEqual(4, $result[0]['id']);
+		$this->assertEqual(2, $result[1]['id']);
+	}
 }
 
 ?>
