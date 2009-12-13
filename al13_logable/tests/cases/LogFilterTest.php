@@ -106,6 +106,22 @@ class LogFilterTest extends \lithium\test\Unit {
 		$this->assertIdentical(4, sizeof($logs));
 		$this->assertEqual('delete', $logs[3]['action']);
 	}
+
+	public function testFindFilter() {
+		MockLog::events(array('\al13_logable\tests\mocks\MockCar'), array('read'));
+
+		$cars = MockCar::find('all');
+
+		$result = MockLog::find('all');
+		$this->assertIdentical(3, sizeof($result));
+
+		$car = MockCar::find(2);
+
+		$logs = MockLog::find('all');
+		$this->assertIdentical(4, sizeof($logs));
+		$this->assertEqual('read', $logs[3]['action']);
+		$this->assertEqual($car->name, $logs[3]['title']);
+	}
 }
 
 ?>

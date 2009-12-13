@@ -56,11 +56,29 @@ class Log extends \lithium\data\Model {
 					if  ($event == 'create' && in_array('update', $events)) {
 						continue; // so save filter is only added once.
 					}
+				} elseif($event == 'read') {
+					$filter = 'find';
 				}
 
 				$model::applyFilter($filter, function($self, $params, $chain) use ($logmodel, $events) {
 					$filteredMethod = $chain->method();
 					switch ($filteredMethod) {
+						case 'find' :
+							if ($params['type'] != 'first') {
+								return $chain->next($self, $params, $chain);
+							}
+							$action = 'read';
+							$res =  $chain->next($self, $params, $chain);
+							if ($res) {
+								'\\'.$logmodel::create(array(
+									'model' => $self::invokeMethod('_name'),
+									'action' => $action,
+									'pk' => $res->id,
+									'title' => $res->{$self::meta('title')}
+								))->save();
+							}
+							return $res;
+							break;
 						case 'save' :
 							$action = (isset($params['record']->id)) ? 'update' : 'create';
 							if (!in_array($action, $events)) {
