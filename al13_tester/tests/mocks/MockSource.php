@@ -1,7 +1,16 @@
 <?php
 
-namespace al13_logable\tests\mocks;
-
+namespace al13_tester\tests\mocks;
+/*
+ *
+	protected $_classes = array(
+		'query' => '\lithium\data\model\Query',
+		'record' => '\lithium\data\model\Document',
+		'validator' => '\lithium\util\Validator',
+		'recordSet' => '\lithium\data\model\Document',
+		'connections' => '\lithium\data\Connections'
+	);
+ */
 /**
  * Generic source mock that models can use to act normally without using a real source
  *
@@ -29,10 +38,15 @@ class MockSource extends \lithium\data\Source {
 	 * Set an array of records as the fixtures of given source
 	 *
 	 * @param string $source
-	 * @param array $fixtures
+	 * @param array $fixtures if empty, will empty the fixtures (and return them)
 	 * @return void
 	 */
 	public function fixtures($source, $fixtures = array()) {
+		if (empty($fixtures)) {
+			$tmp = $this->__data[$source];
+			$this->__data[$source] = array();
+			return $tmp;
+		}
 		$this->__data[$source] = array();
 		foreach ($fixtures as $row) {
 			$this->__data[$source][] = (object) $row;
@@ -64,12 +78,15 @@ class MockSource extends \lithium\data\Source {
 	public function read($query, $options) {
 		$model = $query->model();
 		$source = $model::meta('source');
+		if (!isset($this->__data[$source])) {
+			return array(); //array('error' => $source . ' doesnt exist'));
+		}
 		if (!empty($options['conditions'])) {
 			$key = $this->locate($source, array('id' => $options['conditions']['id']));
 			if ($key !== false) {
 				return $this->__data[$source][$key];
 			}
-			return new \stdClass();
+			return array(); //array('error' => 'record not found in '.$source));
 		}
 		return $this->__data[$source];
 	}
@@ -104,7 +121,11 @@ class MockSource extends \lithium\data\Source {
 		if ($key === false) {
 			return false;
 		}
-		$this->__data[$source][$key] = array_pop($this->__data[$source]);
+		if ($key == sizeof($this->__data[$source])-1) {
+			unset($this->__data[$source][$key]);
+		} else {
+			$this->__data[$source][$key] = array_pop($this->__data[$source]);
+		}
 		return true;
 	}
 
@@ -158,6 +179,15 @@ class MockSource extends \lithium\data\Source {
 			return array_keys($this->__data[$entity][0]);
 		}
 		return array();
+	}
+
+	public function configureClass($class) {
+		return array(
+			'classes' => array(
+				'record' => '\lithium\data\model\Document',
+				'recordSet' => '\lithium\data\model\Document'
+			)
+		);
 	}
 
 	/**

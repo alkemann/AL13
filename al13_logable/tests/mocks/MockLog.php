@@ -2,7 +2,6 @@
 
 namespace al13_logable\tests\mocks;
 
-use \lithium\data\model\Document;
 
 class MockLog extends \al13_logable\models\Log {
 
@@ -13,13 +12,6 @@ class MockLog extends \al13_logable\models\Log {
 		'title' => 'name'
 	);
 
-	protected $_classes = array(
-		'query' => '\lithium\data\model\Query',
-		'record' => '\lithium\data\model\Document',
-		'validator' => '\lithium\util\Validator',
-		'recordSet' => '\lithium\data\model\Document',
-		'connections' => '\lithium\data\Connections'
-	);
 
 	public static function fixtures() {
 		return array(

@@ -9,7 +9,7 @@ use \lithium\data\Connections;
 class LogFilterTest extends \lithium\test\Unit {
 
 	public function _init() {
-		Connections::add('mock-source', '\al13_logable\tests\mocks\MockSource');
+		Connections::add('mock-source', '\al13_tester\tests\mocks\MockSource');
 	}
 
 	public function setUp() {
