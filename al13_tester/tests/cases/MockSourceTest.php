@@ -4,6 +4,7 @@ namespace al13_tester\tests\cases;
 
 use \al13_tester\tests\mocks\MockPost;
 use \al13_tester\tests\mocks\MockCar;
+use \al13_tester\tests\mocks\MockUser;
 use \lithium\data\Connections;
 
 class MockSourceTest extends \lithium\test\Unit {
@@ -23,7 +24,7 @@ class MockSourceTest extends \lithium\test\Unit {
 		$this->assertTrue(empty($result));
 	}
 
-	public function testSetFixtures() {
+	public function testFixtures() {
 		$mockTestData = array(
 			array('id' => 1, 'title' => 'One'),
 			array('id' => 2, 'title' => 'Two'),
@@ -38,10 +39,13 @@ class MockSourceTest extends \lithium\test\Unit {
 		);
 		$result = Connections::get('mock-source')->fixtures('mock_tests');
 		$this->assertEqual($expected, $result);
+
+		$result = Connections::get('mock-source')->fixtures('mock_tests');
+		$this->assertEqual(array(), $result);
 	}
 
 	public function testMockPostFind() {
-		Connections::get('mock-source')->fixtures(MockPost::meta('source'), MockPost::fixtures());
+		Connections::get('mock-source')->setup(array('\al13_tester\tests\mocks\MockPost'));
 
 		$expected = array(
 			'id' => 2,
@@ -60,7 +64,7 @@ class MockSourceTest extends \lithium\test\Unit {
 	}
 
 	public function testMockCarFind() {
-		Connections::get('mock-source')->fixtures(MockCar::meta('source'), MockCar::fixtures());
+		Connections::get('mock-source')->setup(array('\al13_tester\tests\mocks\MockCar'));
 
 		$expected = 'Rose';
 		$car = MockCar::find(1);
@@ -69,7 +73,10 @@ class MockSourceTest extends \lithium\test\Unit {
 	}
 
 	public function testCreateEmptySource() {
-		Connections::get('mock-source')->fixtures(MockCar::meta('source'));
+		Connections::get('mock-source')->setup(
+			array('\al13_tester\tests\mocks\MockCar'),
+			array('fixtures' => false)
+		);
 		$new = MockCar::create();
 		$this->assertTrue($new->save());
 
@@ -80,7 +87,8 @@ class MockSourceTest extends \lithium\test\Unit {
 	}
 
 	public function testCreateWithSource() {
-		Connections::get('mock-source')->fixtures(MockCar::meta('source'), MockCar::fixtures());
+		Connections::get('mock-source')->setup(array('\al13_tester\tests\mocks\MockCar'));
+
 		$new = MockCar::create();
 		$this->assertTrue($new->save());
 
@@ -91,7 +99,7 @@ class MockSourceTest extends \lithium\test\Unit {
 	}
 
 	public function testEdit() {
-		Connections::get('mock-source')->fixtures(MockCar::meta('source'), MockCar::fixtures());
+		Connections::get('mock-source')->setup(array('\al13_tester\tests\mocks\MockCar'));
 
 		$car = MockCar::find(2);
 		$car->name = 'Lithium';
@@ -104,7 +112,7 @@ class MockSourceTest extends \lithium\test\Unit {
 	}
 
 	public function testDelete() {
-		Connections::get('mock-source')->fixtures(MockCar::meta('source'), MockCar::fixtures());
+		Connections::get('mock-source')->setup(array('\al13_tester\tests\mocks\MockCar'));
 
 		$car = MockCar::find(2);
 		$this->assertTrue($car->delete());
@@ -114,7 +122,7 @@ class MockSourceTest extends \lithium\test\Unit {
 	}
 
 	public function testPostDelete() {
-		Connections::get('mock-source')->fixtures(MockPost::meta('source'), MockPost::fixtures());
+		Connections::get('mock-source')->setup(array('\al13_tester\tests\mocks\MockPost'));
 
 		$this->assertTrue(MockPost::find(1)->delete());
 		$this->assertTrue(MockPost::find(3)->delete());
@@ -123,6 +131,46 @@ class MockSourceTest extends \lithium\test\Unit {
 		$result = $posts->data();
 		$this->assertEqual(4, $result[0]['id']);
 		$this->assertEqual(2, $result[1]['id']);
+	}
+
+	public function testDescribe() {
+		Connections::get('mock-source')->setup(array('\al13_tester\tests\mocks\MockUser'));
+		$expected = array(
+			'id' => array(
+				'type' => 'int',
+				'null' => false,
+				'length' => '10',
+				'default' => null
+			),
+			'name' => array(
+				'type' => 'varchar',
+				'null' => false,
+				'length' => '10',
+				'default' => null
+			),
+			'description' => array(
+				'type' => 'text',
+				'length' => NULL,
+				'null' => true,
+				'default' => NULL
+			),
+			'status' => array(
+				'type' => 'tinyint',
+				'length' => '1',
+				'null' => false,
+				'default' => 0
+			),
+			'created' => array(
+				'type' => 'datetime'
+			)
+		);
+		$result = Connections::get('mock-source')->describe(MockUser::meta('source'));
+		$this->assertEqual($expected, $result);
+
+		$expected = 3;
+		$users = MockUser::find('all');
+		$result = sizeof($users->data());
+		$this->assertEqual($expected, $result);
 	}
 }
 

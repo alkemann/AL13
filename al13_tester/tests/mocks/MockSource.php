@@ -26,6 +26,12 @@ class MockSource extends \lithium\data\Source {
 	private $__data = array();
 
 	/**
+	 * Temporary store schemas of fake sources
+	 * @var unknown_type
+	 */
+	private $__schemas = array();
+
+	/**
 	 * Set an array of records as the fixtures of given source
 	 *
 	 * @param string $source
@@ -41,6 +47,27 @@ class MockSource extends \lithium\data\Source {
 		$this->__data[$source] = array();
 		foreach ($fixtures as $row) {
 			$this->__data[$source][] = (object) $row;
+		}
+	}
+
+	public function setup($tables = array(), $options = array()) {
+		foreach ($tables as $model) {
+			$source = $model::meta('source');
+			$this->__schemas[$source] = $model::schema();
+			$this->__data[$source] = array();
+			if (isset($options['fixtures'])) {
+				if (is_array($options['fixtures'])) {
+					foreach ($options['fixtures'] as $row) {
+						$this->__data[$source][] = (object) $row;
+					}
+					continue;
+				} elseif (!$options['fixtures'])  {
+					continue;
+				}
+			}
+			foreach ($model::fixtures() as $row) {
+				$this->__data[$source][] = (object) $row;
+			}
 		}
 	}
 
@@ -166,6 +193,9 @@ class MockSource extends \lithium\data\Source {
 	 * @return array
 	 */
 	public function describe($entity, $meta = null) {
+		if (isset($this->__schemas[$entity])) {
+			return $this->__schemas[$entity];
+		}
 		if (isset($this->__data[$entity]) && !empty($this->__data[$entity])) {
 			return array_keys($this->__data[$entity][0]);
 		}
