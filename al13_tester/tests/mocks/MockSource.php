@@ -1,16 +1,7 @@
 <?php
 
 namespace al13_tester\tests\mocks;
-/*
- *
-	protected $_classes = array(
-		'query' => '\lithium\data\model\Query',
-		'record' => '\lithium\data\model\Document',
-		'validator' => '\lithium\util\Validator',
-		'recordSet' => '\lithium\data\model\Document',
-		'connections' => '\lithium\data\Connections'
-	);
- */
+
 /**
  * Generic source mock that models can use to act normally without using a real source
  *
@@ -39,7 +30,7 @@ class MockSource extends \lithium\data\Source {
 	 *
 	 * @param string $source
 	 * @param array $fixtures if empty, will empty the fixtures (and return them)
-	 * @return void
+	 * @return void|array
 	 */
 	public function fixtures($source, $fixtures = array()) {
 		if (empty($fixtures)) {
