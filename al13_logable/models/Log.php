@@ -34,7 +34,7 @@ class Log extends \lithium\data\Model {
 	 * @return void
 	 */
 	public static function events($models, $events = array(), $options = array()) {
-		$logmodel = get_called_class();
+		$logmodel = '\\'.get_called_class();
 		if (empty($events)) {
 			$events = array('create','update','delete');
 		}
@@ -62,42 +62,41 @@ class Log extends \lithium\data\Model {
 
 				$model::applyFilter($filter, function($self, $params, $chain) use ($logmodel, $events) {
 					$filteredMethod = $chain->method();
+					$action = (isset($params['record']->id)) ? 'update' : 'create';
+					$result =  $chain->next($self, $params, $chain);
 					switch ($filteredMethod) {
 						case 'find' :
 							if ($params['type'] != 'first') {
-								return $chain->next($self, $params, $chain);
+								return $result;
 							}
 							$action = 'read';
-							$res =  $chain->next($self, $params, $chain);
-							if ($res) {
-								'\\'.$logmodel::create(array(
-									'model' => $self::invokeMethod('_name'),
-									'action' => $action,
-									'pk' => $res->id,
-									'title' => $res->{$self::meta('title')}
-								))->save();
+							if ($result) {
+								$pk = $result->id;
+								$title = $result->{$self::meta('title')};
 							}
-							return $res;
 							break;
 						case 'save' :
-							$action = (isset($params['record']->id)) ? 'update' : 'create';
 							if (!in_array($action, $events)) {
-								return $chain->next($self, $params, $chain);
+								return $result;
 							}
+							$pk = $params['record']->id;
+							$title = $params['record']->{$self::meta('title')};
 							break;
 						default:
 							$action = $filteredMethod;
+							$pk = $params['record']->id;
+							$title = $params['record']->{$self::meta('title')};
 					}
-					$res =  $chain->next($self, $params, $chain);
-					if ($res) {
-						'\\'.$logmodel::create(array(
+					if ($result) {
+						$logData = array(
 							'model' => $self::invokeMethod('_name'),
 							'action' => $action,
-							'pk' => $params['record']->id,
-							'title' => $params['record']->{$self::meta('title')}
-						))->save();
+							'pk' => $pk,
+							'title' => $title
+						);
+						$logmodel::create($logData)->save();
 					}
-					return $res;
+					return $result;
 				});
 			}
 		}
