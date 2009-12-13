@@ -23,7 +23,7 @@ class LogFilterTest extends \lithium\test\Unit {
 		$result = MockCar::getFilters();
 		$this->assertEqual($expected, $result);
 
-		MockLog::setModelEvents(array('\al13_logable\tests\mocks\MockCar'));
+		MockLog::events(array('\al13_logable\tests\mocks\MockCar'));
 
 		$filters = MockCar::getFilters();
 		$this->assertEqual(2, sizeof($filters));
@@ -32,7 +32,7 @@ class LogFilterTest extends \lithium\test\Unit {
 	}
 
 	public function testCreateFilter() {
-		MockLog::setModelEvents(array('\al13_logable\tests\mocks\MockCar'), array('create'));
+		MockLog::events(array('\al13_logable\tests\mocks\MockCar'), array('create'));
 		$saved = MockCar::create()->save();
 
 		$expected = array('name' => 'Lily', 'brand' => 'Ford', 'plate' => 'R0KKY', 'id' => 3);
@@ -50,7 +50,7 @@ class LogFilterTest extends \lithium\test\Unit {
 	}
 
 	public function testUpdateFilter() {
-		MockLog::setModelEvents(array('\al13_logable\tests\mocks\MockCar'), array('update'));
+		MockLog::events(array('\al13_logable\tests\mocks\MockCar'), array('update'));
 
 		$car = MockCar::find(2);
 		$car->plate = 'IR2';
@@ -67,7 +67,7 @@ class LogFilterTest extends \lithium\test\Unit {
 	}
 
 	public function testCreateAndUpdateWithDefaultFilters() {
-		MockLog::setModelEvents(array('\al13_logable\tests\mocks\MockCar'));
+		MockLog::events(array('\al13_logable\tests\mocks\MockCar'));
 
 		$saved = MockCar::create()->save();
 		$result = MockLog::find('all');
@@ -82,7 +82,7 @@ class LogFilterTest extends \lithium\test\Unit {
 	}
 
 	public function testSaveFilter() {
-		MockLog::setModelEvents(array('\al13_logable\tests\mocks\MockCar'), array('save'));
+		MockLog::events(array('\al13_logable\tests\mocks\MockCar'), array('save'));
 
 		$saved = MockCar::create()->save();
 		$result = MockLog::find('all');
@@ -97,7 +97,7 @@ class LogFilterTest extends \lithium\test\Unit {
 	}
 
 	public function testDeleteFilter() {
-		MockLog::setModelEvents(array('\al13_logable\tests\mocks\MockCar'), array('delete'));
+		MockLog::events(array('\al13_logable\tests\mocks\MockCar'), array('delete'));
 
 		$car = MockCar::find(2);
 		$this->assertTrue($car->delete());

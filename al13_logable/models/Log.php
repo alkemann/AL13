@@ -25,6 +25,8 @@ class Log extends \lithium\data\Model {
 	);
 
 	/**
+	 * For each fully namespaced model given, setup log filters on each event given.
+	 * If no events is given, save and delete filters will be applied
 	 *
 	 * @param array $models
 	 * @param array $events
@@ -82,7 +84,6 @@ class Log extends \lithium\data\Model {
 			}
 		}
 	}
-
 }
 
 ?>
