@@ -50,6 +50,15 @@ class MockSource extends \lithium\data\Source {
 		}
 	}
 
+	/**
+	 * Setup MockModel's in the source,
+	 * Models need to have schema property defined.
+	 * Either supply fixtures through the setup or in a fixtures method.
+	 *
+	 * @param array $tables
+	 * @param array $options
+	 * @return void
+	 */
 	public function setup($tables = array(), $options = array()) {
 		foreach ($tables as $model) {
 			$source = $model::meta('source');
