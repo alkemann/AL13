@@ -2,14 +2,19 @@
 
 namespace al13_logable\models;
 
-use \lithium\data\Connections;
-
+/**
+ * This model should not be used directly but rather extended in your app so you can
+ * control the meta, schema, created field and count implementations.
+ *
+ *
+ */
 class Log extends \lithium\data\Model {
 
-	protected $_meta = array(
-		'source' => 'logs'
-	);
-
+	/**
+	 * Override in model as needed, should be at least these
+	 *
+	 * @var array
+	 */
 	protected $_schema = array(
 		'id' => array('type' => 'string'),
 		'model'=> array('type' => 'string'),
@@ -26,7 +31,7 @@ class Log extends \lithium\data\Model {
 	 * @param array $options
 	 * @return void
 	 */
-	public static function setModelEvents($models, $events = array(), $options = array()) {
+	public static function events($models, $events = array(), $options = array()) {
 		$logmodel = get_called_class();
 		if (empty($events)) {
 			$events = array('create','update','delete');
@@ -78,29 +83,6 @@ class Log extends \lithium\data\Model {
 		}
 	}
 
-	public static function __init($options = array()) {
-		parent::__init($options);
-		$self = static::_instance();
-		$self->_finders['count'] = function($self, $params, $chain) {
-			$result = Connections::get($self::meta('connection'))->get(
-				$self::meta('source') . '/_design/log/_view/count'
-			);
-			if (empty($result->total_rows)) {
-				return 0;
-			}
-			return $result->total_rows;
-		};
-		static::applyFilter('save', function($self, $params, $chain) {
-			if (!$params['record']->id) {
-				$params['record']->created = date('Y-m-d h:i:s');
-			}
-			return $chain->next($self, $params, $chain);
-		});
-	}
-
-	public static function install() {
-		return Connections::get(static::meta('connection'))->put(static::meta('source'));
-	}
 }
 
 ?>
