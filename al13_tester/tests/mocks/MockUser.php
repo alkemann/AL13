@@ -2,7 +2,7 @@
 
 namespace al13_tester\tests\mocks;
 
-class MockUser extends \lithium\data\Model {
+class MockUser extends \al13_tester\test\data\TestModel {
 
 	protected $_schema = array(
 		'id' => array(

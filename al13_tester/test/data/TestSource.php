@@ -90,6 +90,9 @@ class TestSource extends \lithium\data\Source {
 	public function create($query, $options) {
 		$model = $query->model();
 		$source = $model::meta('source');
+		if (!isset($this->__data[$source])) {
+			$this->__data[$source] = array();
+		}
 		$record = $query->record();
 		$record->id = sizeof($this->__data[$source])+1;
 		$this->__data[$source][] = (object) $record->data();

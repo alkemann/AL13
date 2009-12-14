@@ -5,6 +5,7 @@ namespace al13_tester\tests\cases;
 use \al13_tester\tests\mocks\MockPost;
 use \al13_tester\tests\mocks\MockCar;
 use \al13_tester\tests\mocks\MockUser;
+use \al13_tester\tests\mocks\MockBlank;
 use \lithium\data\Connections;
 
 class TestSourceTest extends \lithium\test\Unit {
@@ -170,6 +171,67 @@ class TestSourceTest extends \lithium\test\Unit {
 		$expected = 3;
 		$users = MockUser::find('all');
 		$result = sizeof($users->data());
+		$this->assertEqual($expected, $result);
+	}
+
+	public function testMockBlankNoSetup() {
+		$result = MockBlank::find('all');
+		$result = $result->data();
+		$this->assertTrue(empty($result));
+
+		$this->assertTrue(MockBlank::create(array('title' => 'Lorem', 'user_id' => 2))->save());
+
+		$expected = array(
+			'title' => 'Lorem',
+			'user_id' => 2,
+			'id' => 1
+		);
+		$blank = MockBlank::find(1);
+		$result = $blank->data();
+		$this->assertEqual($expected, $result);
+
+		$blank->user_id = 66;
+		$this->assertTrue($blank->save());
+
+		$expected = array(
+			'title' => 'Lorem',
+			'user_id' => 66,
+			'id' => 1
+		);
+		$blank = MockBlank::find(1);
+		$result = $blank->data();
+		$this->assertEqual($expected, $result);
+		Connections::get('test-source')->records('mock_blanks');
+	}
+
+	public function testMockBlankSetup() {
+		Connections::get('test-source')->setup(array('\al13_tester\tests\mocks\MockBlank'));
+
+		$result = MockBlank::find('all');
+		$result = $result->data();
+		$this->assertTrue(empty($result));
+
+		$this->assertTrue(MockBlank::create(array('title' => 'Lorem', 'user_id' => 2))->save());
+
+		$expected = array(
+			'title' => 'Lorem',
+			'user_id' => 2,
+			'id' => 1
+		);
+		$blank = MockBlank::find(1);
+		$result = $blank->data();
+		$this->assertEqual($expected, $result);
+
+		$blank->user_id = 66;
+		$this->assertTrue($blank->save());
+
+		$expected = array(
+			'title' => 'Lorem',
+			'user_id' => 66,
+			'id' => 1
+		);
+		$blank = MockBlank::find(1);
+		$result = $blank->data();
 		$this->assertEqual($expected, $result);
 	}
 }

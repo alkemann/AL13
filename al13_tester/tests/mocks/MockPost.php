@@ -2,7 +2,7 @@
 
 namespace al13_tester\tests\mocks;
 
-class MockPost extends \lithium\data\Model {
+class MockPost extends \al13_tester\test\data\TestModel {
 
 	protected $_schema = array(
 		'id' => array('type' => 'integer'),
