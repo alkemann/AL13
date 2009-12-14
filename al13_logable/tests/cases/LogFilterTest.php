@@ -9,12 +9,14 @@ use \lithium\data\Connections;
 class LogFilterTest extends \lithium\test\Unit {
 
 	public function _init() {
-		Connections::add('mock-source', '\al13_tester\tests\mocks\MockSource');
+		Connections::add('test-source', '\al13_tester\test\data\TestSource');
 	}
 
 	public function setUp() {
-		Connections::get('mock-source')->fixtures(MockCar::meta('source'), MockCar::fixtures());
-		Connections::get('mock-source')->fixtures(MockLog::meta('source'), MockLog::fixtures());
+		Connections::get('test-source')->setup(array(
+			'\al13_logable\tests\mocks\MockCar',
+			'\al13_logable\tests\mocks\MockLog'
+		));
 		MockCar::clearFilters();
 	}
 

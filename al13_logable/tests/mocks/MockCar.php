@@ -2,7 +2,7 @@
 
 namespace al13_logable\tests\mocks;
 
-class MockCar extends \lithium\data\Model {
+class MockCar extends \al13_tester\test\data\TestModel {
 
 	protected $_schema = array(
 		'id' => array('type' => 'integer'),
@@ -12,9 +12,8 @@ class MockCar extends \lithium\data\Model {
 	);
 
 	protected $_meta = array(
-		'connection' => 'mock-source',
+		'connection' => 'test-source',
 		'source' => 'mock_cars',
-		'key' => 'id',
 		'title' => 'name'
 	);
 
@@ -25,7 +24,7 @@ class MockCar extends \lithium\data\Model {
 	public static function getFilters() {
 		return static::_instance()->_instanceFilters;
 	}
-	public static function fixtures() {
+	public static function records() {
 		return array(
 			array('name' => 'Rose', 'brand' => 'BMW', 'plate' => 'IRH0T', 'id' => 1),
 			array('name' => 'Petal', 'brand' => 'BMW', 'plate' => 'FL0WR', 'id' => 2)

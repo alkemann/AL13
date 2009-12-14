@@ -6,14 +6,13 @@ namespace al13_logable\tests\mocks;
 class MockLog extends \al13_logable\models\Log {
 
 	protected $_meta = array(
-		'connection' => 'mock-source',
+		'connection' => 'test-source',
 		'source' => 'mock_logs',
-		'key' => 'id',
 		'title' => 'name'
 	);
 
 
-	public static function fixtures() {
+	public static function records() {
 		return array(
 			array(
 				'model' => 'MockCar', 'action' => 'create', 'pk' => 1, 'title' => 'Rose',
