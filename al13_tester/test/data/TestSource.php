@@ -1,6 +1,6 @@
 <?php
 
-namespace al13_tester\tests\mocks;
+namespace al13_tester\test\data;
 
 /**
  * Generic source mock that models can use to act normally without using a real source
@@ -8,7 +8,7 @@ namespace al13_tester\tests\mocks;
  * @author alkemann
  * @version 1.0
  */
-class MockSource extends \lithium\data\Source {
+class TestSource extends \lithium\data\Source {
 
 	/**
 	 * Counter used by the result method to lazy load results
