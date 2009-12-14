@@ -35,13 +35,13 @@ class MockUser extends \lithium\data\Model {
 	);
 
 	protected $_meta = array(
-		'connection' => 'mock-source',
+		'connection' => 'test-source',
 		'source' => 'mock_users',
 		'key' => 'id',
 		'title' => 'name'
 	);
 
-	public static function fixtures() {
+	public static function records() {
 		return array(
 			array(
 				'id' => 1,

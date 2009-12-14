@@ -12,12 +12,12 @@ class MockCar extends \lithium\data\Model {
 	);
 
 	protected $_meta = array(
-		'connection' => 'mock-source',
+		'connection' => 'test-source',
 		'source' => 'mock_cars',
 		'title' => 'name'
 	);
 
-	public static function fixtures() {
+	public static function records() {
 		return array(
 			array('id' => 1, 'name' => 'Rose', 'brand' => 'BMW', 'plate' => 'IRH0T'),
 			array('id' => 2, 'name' => 'Petal', 'brand' => 'BMW', 'plate' => 'FL0WR')

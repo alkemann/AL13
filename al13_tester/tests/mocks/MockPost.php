@@ -12,34 +12,34 @@ class MockPost extends \lithium\data\Model {
 	);
 
 	protected $_meta = array(
-		'connection' => 'mock-source',
+		'connection' => 'test-source',
 		'source' => 'mock_posts'
 	);
 
-	public static function fixtures() {
+	public static function records() {
 		return array(
 			array(
 				'id' => 1,
-				'title' => 'A story of two stones', 
-				'content' => 'Lorem ipsom content', 
+				'title' => 'A story of two stones',
+				'content' => 'Lorem ipsom content',
 				'created' => '2009-12-12 08:00:00'
 			),
 			array(
 				'id' => 2,
-				'title' => 'Once upon a midnight dreary', 
-				'content' => 'Lorem ipsom content', 
+				'title' => 'Once upon a midnight dreary',
+				'content' => 'Lorem ipsom content',
 				'created' => '2009-12-12 08:01:00'
 			),
 			array(
 				'id' => 3,
-				'title' => 'On that pallid bust of Phallas', 
-				'content' => 'Lorem ipsom content', 
+				'title' => 'On that pallid bust of Phallas',
+				'content' => 'Lorem ipsom content',
 				'created' => '2009-12-12 08:02:00'
 			),
 			array(
 				'id' => 4,
-				'title' => 'Nevermore!', 
-				'content' => 'Lorem ipsom content', 
+				'title' => 'Nevermore!',
+				'content' => 'Lorem ipsom content',
 				'created' => '2009-12-12 08:03:00'
 			),
 		);

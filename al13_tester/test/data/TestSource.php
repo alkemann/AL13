@@ -38,7 +38,7 @@ class TestSource extends \lithium\data\Source {
 	 * @param array $fixtures if empty, will empty the fixtures (and return them)
 	 * @return void|array
 	 */
-	public function fixtures($source, $fixtures = array()) {
+	public function records($source, $fixtures = array()) {
 		if (empty($fixtures)) {
 			$tmp = $this->__data[$source];
 			$this->__data[$source] = array();
@@ -74,7 +74,7 @@ class TestSource extends \lithium\data\Source {
 					continue;
 				}
 			}
-			foreach ($model::fixtures() as $row) {
+			foreach ($model::records() as $row) {
 				$this->__data[$source][] = (object) $row;
 			}
 		}
@@ -95,6 +95,7 @@ class TestSource extends \lithium\data\Source {
 		$this->__data[$source][] = (object) $record->data();
 		return true;
 	}
+
 	/**
 	 * Ask the source for the query'ed record
 	 *

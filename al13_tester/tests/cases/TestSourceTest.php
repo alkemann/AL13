@@ -20,7 +20,7 @@ class TestSourceTest extends \lithium\test\Unit {
 
 	public function testEmptySources() {
 		$result = MockPost::find('all');
-		//$result = $result->data();
+		$result = $result->data();
 		$this->assertTrue(empty($result));
 	}
 
