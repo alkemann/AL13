@@ -17,13 +17,6 @@ class MockCar extends \al13_tester\test\data\TestModel {
 		'title' => 'name'
 	);
 
-	public static function clearFilters() {
-		static::_instance()->_instanceFilters = array();
-	}
-
-	public static function getFilters() {
-		return static::_instance()->_instanceFilters;
-	}
 	public static function records() {
 		return array(
 			array('name' => 'Rose', 'brand' => 'BMW', 'plate' => 'IRH0T', 'id' => 1),

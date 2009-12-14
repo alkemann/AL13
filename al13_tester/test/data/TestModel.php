@@ -18,8 +18,17 @@ class TestModel extends \lithium\data\Model {
 		}
 		parent::__init($options);
 	}
+
 	public static function records() {
 		return array();
+	}
+
+	public static function clearFilters() {
+		static::_instance()->_instanceFilters = array();
+	}
+
+	public static function getFilters() {
+		return static::_instance()->_instanceFilters;
 	}
 }
 
