@@ -9,7 +9,7 @@ use \lithium\data\Connections;
 class LogFilterTest extends \lithium\test\Unit {
 
 	public function _init() {
-		Connections::add('test-source', '\al13_tester\test\data\TestSource');
+		Connections::add('test-source', array('adapter' => '\al13_tester\test\data\TestSource'));
 	}
 
 	public function setUp() {
@@ -39,7 +39,7 @@ class LogFilterTest extends \lithium\test\Unit {
 
 		$expected = array('name' => 'Lily', 'brand' => 'Ford', 'plate' => 'R0KKY', 'id' => 3);
 		$res = MockCar::find(3);
-		$result = $res->data();
+		$result = $res->to('array');
 		$this->assertEqual($expected, $result);
 
 		$res = MockLog::find('all');

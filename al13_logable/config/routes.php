@@ -1,5 +1,5 @@
 <?php
-use \lithium\http\Router;
+use \lithium\net\http\Router;
 
 Router::connect('/logs', array(
 	'plugin' => 'al13_logable',	'controller' => 'logs', 'action' => 'index'
