@@ -1,6 +1,6 @@
 <?php
 
-namespace al13_tester\tests\cases;
+namespace al13_tester\tests\cases\test\data;
 
 use \al13_tester\tests\mocks\MockPost;
 use \al13_tester\tests\mocks\MockCar;
@@ -11,7 +11,7 @@ use \lithium\data\Connections;
 class TestSourceTest extends \lithium\test\Unit {
 
 	public function _init($options = array()) {
-		Connections::add('test-source', '\al13_tester\test\data\TestSource');
+		Connections::add('test-source', array('adapter' => '\al13_tester\test\data\TestSource'));
 	}
 
 	public function testSource() {
@@ -21,7 +21,8 @@ class TestSourceTest extends \lithium\test\Unit {
 
 	public function testEmptySources() {
 		$result = MockPost::find('all');
-		$result = $result->data();
+		dd($result);
+		$result = $result->to('array');
 		$this->assertTrue(empty($result));
 	}
 

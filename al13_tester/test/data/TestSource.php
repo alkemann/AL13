@@ -87,7 +87,7 @@ class TestSource extends \lithium\data\Source {
 	 * @param array $options
 	 * @return boolean
 	 */
-	public function create($query, $options) {
+	public function create($query, array $options = array()) {
 		$model = $query->model();
 		$source = $model::meta('source');
 		if (!isset($this->__data[$source])) {
@@ -95,7 +95,7 @@ class TestSource extends \lithium\data\Source {
 		}
 		$record = $query->record();
 		$record->id = sizeof($this->__data[$source])+1;
-		$this->__data[$source][] = (object) $record->data();
+		$this->__data[$source][] = $record;
 		return true;
 	}
 
@@ -106,7 +106,7 @@ class TestSource extends \lithium\data\Source {
 	 * @param array $options
 	 * @return boolean
 	 */
-	public function read($query, $options) {
+	public function read($query, array $options = array()) {
 		$model = $query->model();
 		$source = $model::meta('source');
 		if (!isset($this->__data[$source])) {
@@ -129,12 +129,12 @@ class TestSource extends \lithium\data\Source {
 	 * @param array $options
 	 * @return boolean
 	 */
-	public function update($query, $options) {
+	public function update($query, array $options = array()) {
 		$model = $query->model();
 		$source = $model::meta('source');
 		$data = $query->record()->data();
 		$key = $this->locate($source, array('id' => $data['id']));
-		$this->__data[$source][$key] = (object) $data;
+		$this->__data[$source][$key] = $query->record();
 		return true;
 	}
 
@@ -145,7 +145,7 @@ class TestSource extends \lithium\data\Source {
 	 * @param array $options
 	 * @return boolean
 	 */
-	public function delete($query, $options) {
+	public function delete($query, array $options = array()) {
 		$model = $query->model();
 		$source = $model::meta('source');
 		$key = $this->locate($source, array('id' => $options['record']->id));
@@ -256,7 +256,25 @@ class TestSource extends \lithium\data\Source {
 		return $key;
 	}
 
+	/**
+	 * Returns a newly-created `Record` object, bound to a model and populated with default data
+	 * and options.
+	 *
+	 * @param string $model A fully-namespaced class name representing the model class to which the
+	 *               `Record` object will be bound.
+	 * @param array $data The default data with which the new `Record` should be populated.
+	 * @param array $options Any additional options to pass to the `Record`'s constructor.
+	 * @return object Returns a new, un-saved `Record` object bound to the model class specified in
+	 *         `$model`.
+	 */
+	public function item($model, array $data = array(), array $options = array()) {
+		return new \lithium\data\model\Record(compact('model', 'data') + $options);
+	}
 /********/
+
+	public function relationship($class, $type, $name, array $options = array()) {
+		return null;
+	}
 
 	public function connect() {
 		return true;
