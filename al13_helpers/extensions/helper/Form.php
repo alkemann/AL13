@@ -57,7 +57,7 @@ class Form extends \lithium\template\helper\Form {
 					$fieldOptions = $label;
 					unset($label);
 				}
-				$return .= $this->field($field, compact('label') + $options + $fieldOptions);
+				$return .= $this->field($field, compact('label') + $fieldOptions + $options);
 			}
 			return $return;
 		}
