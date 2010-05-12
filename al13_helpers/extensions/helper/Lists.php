@@ -18,8 +18,12 @@ use \lithium\net\http\Router;
  *
  * Installation and requirements:
  *
- * - Copy this file to app/views/helpers
- * - add 'Menu' to AppController's $helpers property
+ * - add the AL13_helpers library to your app by
+ * - placing the al13_helpers folder either in your /lithium/libraries/ folder
+ *   or in your /app/libraries/ folder, or somewhere else, but then you must
+ *   supply a 'path' argument to:
+ * - in /app/config/bootstrap/libraries.php add Libraries::add('al13_helpers');
+ * - and it is ready to use in view with autoloading by $this->lists->*
  *
  * Description :
  *
@@ -32,14 +36,14 @@ use \lithium\net\http\Router;
  * helper already know all that it is to render.
  *
  * Usage example 1: Creating a list and rendering it
- *
+ * {{{
  * //We have a list of links stored in the database and on this view we wish to list them out.
  * // A single link array looks like this : array(Link => array(url,title))
- *
  * foreach ($links as $link) {
  * 		$menu->add('link_list',array($link['title'],$link['url']));
  * }
  * echo $menu->generate('link_list');
+ * }}}
  *
  * Usage example 2: Replacing the baked html links with a context sensitive menu
  *
@@ -52,10 +56,12 @@ use \lithium\net\http\Router;
  *      if (isset($menu)) { echo $menu->generate('context'); }
  * 2. Copy the files from cake/console/libs/templates/views to app/vendors/shells/templates/views
  * 3. Inside those 3 files replace
+ * {{{
  *      "echo $html->link("
  *         with
  *      "$menu->add('context', array("
  *         and
+ * }}}
  *    add a ) to the end.
  * 4. Remove the div, ul and li parts that surrounded these links.
  * 5. Add this css rule ul.menu_context li { list-style: none; }
@@ -63,9 +69,8 @@ use \lithium\net\http\Router;
  * Now all these links that used to be echoed in the view, will be printed as a ul on top of the layout.
  *
  * Usage example 3: A multilevel list
- *
+ * {{{
  * //Say we have an Article with hasMany Page, to render a list of links to both we could do :
- *
  * foreach ($data as $article) {
  * 		$menu->add('articles', array($article['Article']['title'],
  * 				array('action'=>'view', $article['Article']['id'])));
@@ -76,9 +81,10 @@ use \lithium\net\http\Router;
  * 		}
  * }
  * echo $menu->generate('articles');
+ * }}}
  *
  * This will genreate this :
- *
+ * {{{
  * <ul>
  * <li><a href="/articles/view/1">Article 1</a></li>
  * <li><ul>
@@ -91,7 +97,7 @@ use \lithium\net\http\Router;
  * 	<li><a href="/pages/view/4">Page 4</a></li>
  * </ul></li>
  * </ul>
- *
+ * }}}
  *
  * Customizations :
  *
@@ -101,8 +107,8 @@ use \lithium\net\http\Router;
  * the A tags, id, class or style LI, UL and DIVs. See each method for specifics.
  *
  * @author Alexander Morland aka alkemann
- * @modified 3.mar 2010
- * @version 0.2
+ * @modified 12.may 2010
+ * @version 0.3
  */
 class Lists extends \al13_helpers\extensions\helper\Helper {
 
