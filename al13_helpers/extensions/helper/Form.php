@@ -52,48 +52,19 @@ class Form extends \lithium\template\helper\Form {
 					$field = $label;
 					unset($label);
 				}
-				$fieldOptions = array();
+				$specificOptions = array();
+				if (!isset($specificOptions['type']) && in_array($field, array('password', 'password_confirm'))) {
+					$specificOptions['type'] = 'password';
+				}
 				if (isset($label) && is_array($label)) {
-					$fieldOptions = $label;
+					$specificOptions = $label + $specificOptions;
 					unset($label);
 				}
-				$return .= $this->field($field, compact('label') + $fieldOptions + $options);
+				$return .= $this->field($field, compact('label') + $specificOptions + $options);
 			}
 			return $return;
 		}
-		$defaults = array(
-			'label' => null,
-			'type' => 'text',
-			'template' => 'field',
-			'wrap' => array(),
-			'list' => null
-		);
-		list($options, $fieldOptions) = $this->_options($defaults, $options);
-		list($name, $options, $template) = $this->_defaults(__FUNCTION__, $name, $options);
-
-		if ($options['template'] != $defaults['template']) {
-			$template = $options['template'];
-		}
-		$wrap = $options['wrap'];
-		$type = $options['type'];
-		$label = $input = null;
-
-		if ($options['label'] === null || $options['label']) {
-			$label = $this->label($name, $options['label']);
-		}
-
-		switch (true) {
-			case ($type == 'select'):
-				$input = $this->select($name, $options['list'], $fieldOptions);
-			break;
-			default:
-				$input = $this->{$type}($name, $fieldOptions);
-			break;
-		}
-		$error = ($this->_binding) ? $this->error($name) : null;
-		$params = compact('wrap', 'label', 'input', 'error');
-
-		return $this->_render(__METHOD__, $template, $params);
+		return $this->field($name, $options);
 	}
 
 }
