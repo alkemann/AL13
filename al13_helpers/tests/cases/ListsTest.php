@@ -4,38 +4,26 @@ namespace al13_helpers\tests\cases;
 
 use \al13_helpers\extensions\helper\Lists;
 use \lithium\tests\mocks\template\helper\MockFormRenderer;
+use \lithium\net\http\Router;
 
 class ListsTest extends \lithium\test\Unit {
 
 	public function setUp() {
+		$this->base = '/parks';
 		$this->lists = new Lists(array('context' => new MockFormRenderer()));
 	}
 
-	public function stestList() {
-		$this->lists->add('main', array('Home','/'));
-		$result = $this->lists->generate('main');
-
-		$this->assertTags($result, array(
-			array('li' => array()),
-			array('input' => array('type' => 'text', 'name' => 'name')),
-			'/li',
-			array('li' => array()),
-			array('label' => array('for' => 'present')),
-				'Present',
-			'/label',
-			array('input' => array('type' => 'checkbox', 'name' => 'present')),
-			'/li',
-		));
-	}
 
     function testNestedWithOne() {
-    	$this->lists->add('main', array('Home','/',array('title' => 'Go Home')));
+    	$this->lists->add('main', array('Home','/', array('title' => 'Go Home')));
     	$result = $this->lists->generate('main');
     	$expected = array(
 	    	array('ul' => array('class' => 'menu_main')),
-	    	'<li',
-	    	array('a' => array('href' => '/', 'title' => 'Go Home')) , 'Home', '/a',
-	    	'/li',
+		    	'<li',
+		    		array('a' => array('title' => 'Go Home', 'href' => $this->base.'/')) ,
+		    			'Home',
+		    		'/a',
+		    	'/li',
 	    	'/ul'
     	);
     	$this->assertTags($result, $expected);
@@ -47,8 +35,8 @@ class ListsTest extends \lithium\test\Unit {
     	$result = $this->lists->generate('main');
     	$expected = array(
 	    	array('ul' => array('class' => 'menu_main')),
-	    	'<li', array('a' => array('href'=>'/', 'title' => 'Home'))		 , 'Home' , '/a', '/li',
-	    	'<li', array('a' => array('href'=>'/about', 'title' => 'About')) , 'About' , '/a', '/li',
+	    	'<li', array('a' => array('href' => $this->base.'/', 'title' => 'Home'))		 , 'Home' , '/a', '/li',
+	    	'<li', array('a' => array('href' => $this->base.'/about', 'title' => 'About')) , 'About' , '/a', '/li',
 	    	'/ul'
     	);
     	$this->assertTags($result, $expected);
@@ -63,7 +51,7 @@ class ListsTest extends \lithium\test\Unit {
     	$expected = array(
 	    	array('ul' => array('id'=>'menu', 'class'=>'nese')),
 	    	'<li',
-	    	array('a' => array('href'=>'/', 'title' => 'Home')) , 'Home' , '/a',
+	    	array('a' => array('href' => $this->base.'/', 'title' => 'Home')) , 'Home' , '/a',
 	    	'/li',
 	    	'/ul'
     	);
@@ -83,7 +71,7 @@ class ListsTest extends \lithium\test\Unit {
     	$expected = array(
 	    	array('ul' => array('class' => 'menu_main')),
     			'<li',
-	    			array('a' => array('href'=>'/', 'title' => 'Home','id'=>'home', 'class'=>'homeclass', 'style' => 'text-decoration:none;')),
+	    			array('a' => array('href' => $this->base.'/', 'title' => 'Home','id'=>'home', 'class'=>'homeclass', 'style' => 'text-decoration:none;')),
 	    				'Home',
 	    			'/a',
 	    		'/li',
@@ -101,7 +89,7 @@ class ListsTest extends \lithium\test\Unit {
     	$expected = array(
 	    	array('ul' => array('class' => 'menu_main')),
 	    	array('li' => array('id'=>'homeli', 'class'=>'homeliclass', 'style' => 'width:100%')),
-	    	array('a' => array('href'=>'/', 'title' => 'Home')) , 'Home' , '/a',
+	    	array('a' => array('href' => $this->base.'/', 'title' => 'Home')) , 'Home' , '/a',
 	    	'/li',
 	    	'/ul'
     	);
@@ -115,7 +103,7 @@ class ListsTest extends \lithium\test\Unit {
 	    	array('ul' => array('class' => 'menu_main')),
 	    	'<li',
     		array('div' => array('id'=>'divven','class'=>'divs','style'=>'width:50%;')),
-	    	array('a' => array('href'=>'/', 'title' => 'Home')) , 'Home' , '/a',
+	    	array('a' => array('href' => $this->base.'/', 'title' => 'Home')) , 'Home' , '/a',
 	    	'/div',
 	    	'/li',
 	    	'/ul',
@@ -131,7 +119,7 @@ class ListsTest extends \lithium\test\Unit {
     		'<div',
 	    	array('ul' => array('class' => 'menu_main')),
 	    	'<li',
-	    	array('a' => array('href'=>'/', 'title' => 'Home')) , 'Home' , '/a',
+	    	array('a' => array('href' => $this->base.'/', 'title' => 'Home')) , 'Home' , '/a',
 	    	'/li',
 	    	'/ul',
 	    	'/div'
@@ -142,7 +130,7 @@ class ListsTest extends \lithium\test\Unit {
     		array('div' => array('id'=>'divven','class'=>'divs','style'=>'width:50%;')),
 	    	array('ul' => array('class' => 'menu_main')),
 	    	'<li',
-	    	array('a' => array('href'=>'/', 'title' => 'Home')) , 'Home' , '/a',
+	    	array('a' => array('href' => $this->base.'/', 'title' => 'Home')) , 'Home' , '/a',
 	    	'/li',
 	    	'/ul',
 	    	'/div'
@@ -161,11 +149,11 @@ class ListsTest extends \lithium\test\Unit {
     			'div' => array('id'=>'divto','class'=>'divs','style'=>'width:50%;'),
     			'li' => array('class'=>'lis','style'=>'width:100%;')
     		));
-    	$this->lists->add('main', array('Words',	array('controller'=>'words','action'=>'index'), array('class'=>'link')),
+    /*	$this->lists->add('main', array('Words',	array('controller'=>'words','action'=>'index'), array('class'=>'link')),
     		array(
     			'div' => array('id'=>'divtre','class'=>'divs','style'=>'width:50%;'),
     			'li' => array('class'=>'lis','style'=>'width:100%;')
-    		));
+    		));*/
     	$result = $this->lists->generate('main', array(
     		'id'    => 'menu',
     		'class' => 'uls',
@@ -178,44 +166,43 @@ class ListsTest extends \lithium\test\Unit {
 
     				array('li' => array('id' => 'mainli', 'class'=>'lis','style'=>'width:100%;')),
     					array('div' => array('id' => 'diven', 'class'=>'divs','style'=>'width:50%;')),
-	   	 					array('a' => array('href'=>'/', 'class'=> 'link', 'title' => 'Home')) , 'Home' , '/a',
+	   	 					array('a' => array('href' => $this->base.'/', 'class'=> 'link', 'title' => 'Home')) , 'Home' , '/a',
 	    				'/div',
 	    			'/li',
 
     				array('li' => array('class'=>'lis','style'=>'width:100%;')),
     					array('div' => array('id' => 'divto', 'class'=>'divs','style'=>'width:50%;')),
-	   	 					array('a' => array('href'=>'/about', 'title' => 'About us', 'style' => 'display:block;')) , 'About' , '/a',
+	   	 					array('a' => array('href' => $this->base.'/about', 'title' => 'About us', 'style' => 'display:block;')) , 'About' , '/a',
 	    				'/div',
 	    			'/li',
-
+/*
     				array('li' => array('class'=>'lis','style'=>'width:100%;')),
     					array('div' => array('id' => 'divtre', 'class'=>'divs','style'=>'width:50%;')),
-	   	 					array('a' => array('href'=>'/words/', 'class'=> 'link', 'title' => 'Words')) , 'Words' , '/a',
+	   	 					array('a' => array('href' => $this->base.'/words/', 'class'=> 'linfk', 'title' => 'Words')) , 'Words' , '/a',
 	    				'/div',
 	    			'/li',
-
+*/
 	    		'/ul',
 	   	 	'/div',
     	);
     	$this->assertTags($result, $expected);
-
     }
 
     function testFunkyURL() {
     	$this->lists->add('main', array('About us','/pages/about/me',array('title' => 'About')));
     	$this->lists->add('main', array('Example','http://example.org'));
-    	$this->lists->add('main', array('delete',array('controller'=>'users','action'=>'delete',4,'admin'=>true)));
+    	$this->lists->add('main', array('delete',array('controller'=>'users','action'=>'delete', 'args' => array(4))));
     	$result = $this->lists->generate();
     	$expected = array(
 	    	array('ul' => array('class' => 'menu_main')),
 	    	'<li',
-	    	array('a' => array('href' => '/pages/about/me', 'title' => 'About')) , 'About us', '/a',
+	    	array('a' => array('href' => $this->base.'/pages/about/me', 'title' => 'About')) , 'About us', '/a',
 	    	'/li',
 	    	'<li',
 	    	array('a' => array('href' => 'http://example.org', 'title' => 'Example')) , 'Example', '/a',
 	    	'/li',
 	    	'<li',
-	    	array('a' => array('href' => '/admin/users/delete/4', 'title' => 'delete')) , 'delete', '/a',
+	    	array('a' => array('href' => $this->base.'/users/delete/4', 'title' => 'delete')) , 'delete', '/a',
 	    	'/li',
 	    	'/ul'
     	);
@@ -282,12 +269,12 @@ class ListsTest extends \lithium\test\Unit {
     	$expected = array(
 	    	array('ul' => array('class' => 'menu_sub')),
 	    	'<li',
-	    	array('a' => array('href' => '/', 'title' => 'Go Home')) , 'Home', '/a',
+	    	array('a' => array('href' => $this->base.'/', 'title' => 'Go Home')) , 'Home', '/a',
 	    	'/li',
 	    	'/ul'
     	);
     	$this->assertTags($result, $expected);
-    	$result = $this->lists->generate('main');
+    	$result = $this->lists->generate('main', array('force' => true));
     	$expected = array(
 	    	array('ul' => array('class' => 'menu_main')),
 	    	'/ul'
@@ -302,12 +289,12 @@ class ListsTest extends \lithium\test\Unit {
     	$expected = array(
 	    	array('ul' => array('class' => 'menu_main')),
 		    	'<li',
-		    		array('a' => array('href' => '/', 'title' => 'Home')) , 'Home', '/a',
+		    		array('a' => array('href' => $this->base.'/', 'title' => 'Home')) , 'Home', '/a',
 		    	'/li',
 		    	'<li',
 		    		array('ul' => array('class' => 'menu_sub')),
 		    			'<li',
-		    				array('a' => array('href' => '/about', 'title' => 'About')) , 'About', '/a',
+		    				array('a' => array('href' => $this->base.'/about', 'title' => 'About')) , 'About', '/a',
 		    			'/li',
 		    		'/ul',
 		    	'/li',
@@ -324,19 +311,19 @@ class ListsTest extends \lithium\test\Unit {
     	$expected = array(
 	    	array('ul' => array('class' => 'menu_main')),
 		    	'<li',
-		    		array('a' => array('href' => '/', 'title' => 'Home')) , 'Home', '/a',
+		    		array('a' => array('href' => $this->base.'/', 'title' => 'Home')) , 'Home', '/a',
 		    	'/li',
 		    	'<li',
 		    		array('ul' => array('class' => 'menu_sub')),
 		    			'<li',
-		    				array('a' => array('href' => '/about', 'title' => 'About')) , 'About', '/a',
+		    				array('a' => array('href' => $this->base.'/about', 'title' => 'About')) , 'About', '/a',
 		    			'/li',
 		    		'/ul',
 		    	'/li',
 		    	'<li',
 		    		array('ul' => array('class' => 'menu_side')),
 		    			'<li',
-		    				array('a' => array('href' => '/contact', 'title' => 'Contact')) , 'Contact', '/a',
+		    				array('a' => array('href' => $this->base.'/contact', 'title' => 'Contact')) , 'Contact', '/a',
 		    			'/li',
 		    		'/ul',
 		    	'/li',
@@ -356,17 +343,17 @@ class ListsTest extends \lithium\test\Unit {
     	$expected = array(
 	    	array('ul' => array('class' => 'menu_main')),
 		    	'<li',
-		    		array('a' => array('href' => '/', 'title' => 'Home')) , 'Home', '/a',
+		    		array('a' => array('href' => $this->base.'/', 'title' => 'Home')) , 'Home', '/a',
 		    	'/li',
 		    	'<li',
 		    		array('ul' => array('class' => 'menu_sub')),
 		    			'<li',
-		    				array('a' => array('href' => '/about', 'title' => 'About')) , 'About', '/a',
+		    				array('a' => array('href' => $this->base.'/about', 'title' => 'About')) , 'About', '/a',
 		    			'/li',
 				    	'<li',
 				    		array('ul' => array('class' => 'menu_subsub')),
 				    			'<li',
-				    				array('a' => array('href' => '/about', 'title' => 'About')) , 'About', '/a',
+				    				array('a' => array('href' => $this->base.'/about', 'title' => 'About')) , 'About', '/a',
 				    			'/li',
 				    		'/ul',
 				    	'/li',
@@ -375,17 +362,17 @@ class ListsTest extends \lithium\test\Unit {
 		    	'<li',
 		    		array('ul' => array('class' => 'menu_side')),
 		    			'<li',
-		    				array('a' => array('href' => '/', 'title' => 'Home')) , 'Home', '/a',
+		    				array('a' => array('href' => $this->base.'/', 'title' => 'Home')) , 'Home', '/a',
 		    			'/li',
 				    	'<li',
 				    		array('ul' => array('class' => 'menu_sub')),
 				    			'<li',
-				    				array('a' => array('href' => '/about', 'title' => 'About')) , 'About', '/a',
+				    				array('a' => array('href' => $this->base.'/about', 'title' => 'About')) , 'About', '/a',
 				    			'/li',
 						    	'<li',
 						    		array('ul' => array('class' => 'menu_sidesubsub')),
 						    			'<li',
-						    				array('a' => array('href' => '/about', 'title' => 'About')) , 'About', '/a',
+						    				array('a' => array('href' => $this->base.'/about', 'title' => 'About')) , 'About', '/a',
 						    			'/li',
 						    		'/ul',
 						    	'/li',
@@ -405,12 +392,12 @@ class ListsTest extends \lithium\test\Unit {
     	$expected = array(
 	    	array('ul' => array('class' => 'menu_main','id' => 'main_menu_id')),
 		    	'<li',
-		    		array('a' => array('href' => '/', 'title' => 'Home')) , 'Home', '/a',
+		    		array('a' => array('href' => $this->base.'/', 'title' => 'Home')) , 'Home', '/a',
 		    	'/li',
 		    	'<li',
 		    		array('ul' => array('class' => 'menu_sub')),
 		    			'<li',
-		    				array('a' => array('href' => '/about', 'title' => 'About')) , 'About', '/a',
+		    				array('a' => array('href' => $this->base.'/about', 'title' => 'About')) , 'About', '/a',
 		    			'/li',
 		    		'/ul',
 		    	'/li',
@@ -425,7 +412,8 @@ class ListsTest extends \lithium\test\Unit {
     	$this->assertFalse($this->lists->generate(array('side')));
     	$this->assertFalse($this->lists->generate(array('side','sub')));
     	$this->assertFalse($this->lists->generate(array('side','sub','subs','sub')));
-    	$result = $this->lists->generate('main',array('id' => 'main_menu_id'));
+    	$this->assertFalse($this->lists->generate('main'));
+    	$result = $this->lists->generate('main',array('id' => 'main_menu_id', 'force' => true));
     	$expected = array(
 	    	array('ul' => array('class' => 'menu_main','id' => 'main_menu_id')),
 	    	'/ul'

@@ -184,7 +184,7 @@ class Lists extends \al13_helpers\extensions\helper\Helper {
 			$menu = &$this->items;
 
 			for ($i = 0; $i < $depth; $i++) {
-				if (array_key_exists($target[$i], $menu)) {
+				if (!empty($menu) && array_key_exists($target[$i], $menu)) {
 					$menu = &$menu[$target[$i]];
 				} else {
 					$menu[$target[$i]] = array(true);
@@ -223,7 +223,7 @@ class Lists extends \al13_helpers\extensions\helper\Helper {
 			$menu = &$this->items;
 
 			for ($i = 0; $i < $depth; $i++) {
-				if (array_key_exists($target[$i], $menu)) {
+				if (!empty($menu) && array_key_exists($target[$i], $menu)) {
 					$menu = &$menu[$target[$i]];
 				} else {
 					$menu[$target[$i]] = array(true);
@@ -280,6 +280,7 @@ class Lists extends \al13_helpers\extensions\helper\Helper {
 			$ulAttributes['id'] = $options['id'];
 		}
 
+		$menu = array();
 		/* Find source menu */
 		if (is_array($source)) {
 
@@ -287,18 +288,21 @@ class Lists extends \al13_helpers\extensions\helper\Helper {
 			$menu = &$this->items;
 
 			for ($i = 0; $i < $depth; $i++) {
-				if (array_key_exists($source[$i], $menu)) {
+				if (!empty($menu) && array_key_exists($source[$i], $menu)) {
 					$menu = &$menu[$source[$i]];
 				} else {
-					return false;
+					if (!isset($options['force']) || (isset($options['force']) && !$options['force']))
+						return false;
 				}
 			}
 
 		} else {
 			if (!isset($this->items[$source])) {
-				return false;
+				if (!isset($options['force']) || (isset($options['force']) && !$options['force']))
+					return false;
+			} else {
+				$menu = &$this->items[$source];
 			}
-			$menu = &$this->items[$source];
 		}
 		$requestObj = $this->_context->request();
 		if (isset($options['active']['strict']) && !$options['active']['strict']) {
