@@ -1,4 +1,11 @@
 <?php
+/**
+ * Lists helper tests file
+ *
+ * @copyright     Copyright 2010, alkemann
+ * @license       http://opensource.org/licenses/bsd-license.php The BSD License
+ *
+ */
 
 namespace al13_helpers\tests\cases;
 
