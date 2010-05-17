@@ -1,7 +1,15 @@
 <?php
+/**
+ * Time Helper class file.
+ *
+ * @copyright     Copyright 2010, alkemann
+ */
 
 namespace al13_helpers\extensions\helper;
 
+/**
+ * Base helper for all helpers in this package
+ */
 class Helper extends \lithium\template\Helper {
 
 	protected $_strings = array(

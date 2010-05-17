@@ -1,6 +1,16 @@
 <?php
+/**
+ * Time Helper class file.
+ *
+ * @copyright     Copyright 2010, alkemann
+ */
+
 namespace al13_helpers\extensions\helper;
 
+/**
+ * Extended Form helper with more functionality
+ *
+ */
 class Form extends \lithium\template\helper\Form {
 
 	/**
