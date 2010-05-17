@@ -40,7 +40,8 @@ class FormTest extends \lithium\test\Unit {
 				array('label' => array('for' => 'present')),
 					'Present',
 				'/label',
-				array('input' => array('type' => 'checkbox', 'name' => 'present')),
+				array('input' => array('type' => 'hidden', 'value' => 0, 'name' => 'present')),
+				array('input' => array('type' => 'checkbox', 'value' => 1, 'name' => 'present')),
 			'/li',
 		));
 	}
