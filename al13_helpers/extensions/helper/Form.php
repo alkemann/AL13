@@ -56,6 +56,9 @@ class Form extends \lithium\template\helper\Form {
 	 *         label and error message, wrapped in a `<div />` element.
 	 */
 	public function fields($name, array $options = array()) {
+		if (!isset($options['wrap']) || !isset($options['wrap']['class'])) {
+			$options['wrap']['class'] = 'input';
+		}
 		if (is_array($name)) {
 			$return = '';
 			foreach ($name as $field => $label) {
@@ -64,12 +67,18 @@ class Form extends \lithium\template\helper\Form {
 					unset($label);
 				}
 				$specificOptions = array();
-				if (!isset($specificOptions['type']) && in_array($field, array('password', 'password_confirm'))) {
-					$specificOptions['type'] = 'password';
-				}
 				if (isset($label) && is_array($label)) {
 					$specificOptions = $label + $specificOptions;
 					unset($label);
+				}
+				if (!isset($specificOptions['type']) && in_array($field, array('password', 'password_confirm'))) {
+					$specificOptions['type'] = 'password';
+				}
+				if (isset($specificOptions['type'])
+					&& in_array($specificOptions['type'], array('checkbox', 'radio'))
+					&& !isset($options['template'])) {
+					$specificOptions['template'] = $this->_strings['field-checkbox'];
+					$specificOptions['wrap'] = array('class' => 'input '.$specificOptions['type']);
 				}
 				$return .= $this->field($field, compact('label') + $specificOptions + $options);
 			}
@@ -78,6 +87,28 @@ class Form extends \lithium\template\helper\Form {
 		return $this->field($name, $options);
 	}
 
+	public function radio($name, array $options = array(), array $list = array()) {
+		if (empty($list)) {
+			if (!isset($options['checked']) && isset($options['value'])) {
+				$value = false;
+				if ($name && $this->_binding ) {
+					$value = $this->_binding->data($name);
+				}
+				if ($options['value'] == $value)
+					$options['checked'] = true;
+			}
+			return parent::radio($name,$options);
+		}
+		$out = '';
+		foreach ($list as $value => $label) {
+			$itemOptions = $options;
+			$itemOptions['id'] = $name.'-'.$label;
+			$itemOptions['value'] = $value;
+			$out .= $this->radio($name, $itemOptions, array());
+			$out .= $this->label($itemOptions['id'], $label);
+		}
+		return $out;
+	}
 }
 
 ?>

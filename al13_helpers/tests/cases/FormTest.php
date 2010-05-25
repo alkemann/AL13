@@ -9,6 +9,7 @@
 
 namespace al13_helpers\tests\cases;
 
+use \lithium\data\Model\Record;
 use \al13_helpers\extensions\helper\Form;
 use \lithium\tests\mocks\template\helper\MockFormRenderer;
 
@@ -27,26 +28,62 @@ class FormTest extends \lithium\test\Unit {
 			'template' => '<li{:wrap}>{:label}{:input}{:error}</li>'
 		));
 		$expected = array(
-			array('li' => array()),
+			array('li' => array('class' => 'input')),
 				array('label' => array('for' => 'name')),
 					'Name',
 				'/label',
 				array('input' => array('type' => 'text', 'name' => 'name', 'id' => 'name')),
 			'/li',
-			array('li' => array()),
+			array('li' => array('class' => 'input')),
 				array('input' => array('type' => 'text', 'name' => 'surname', 'id' => 'surname')),
 			'/li',
-			array('li' => array()),
+			array('li' => array('class' => 'input')),
 				array('label' => array('for' => 'present')),
 					'Present',
 				'/label',
 				array('input' => array('type' => 'hidden', 'value' => 0, 'name' => 'present')),
-				array('input' => array('type' => 'checkbox', 'value' => 1, 'name' => 'present', 'id' => 'present')),
+				array('input' => array(
+					'type' => 'checkbox', 'value' => 1, 'name' => 'present', 'id' => 'present'
+				)),
 			'/li',
 		);
 		$this->assertTags($result, $expected);
 	}
 
+	public function testRadio() {
+		$user = new Record();
+		$user->gender = 'f';
+		$this->form->create($user);
+
+		$result = $this->form->radio('gender', array('value' => 'm'), array());
+		$expected = array('input' => array('type' => 'radio', 'name' => 'gender', 'value' => 'm'));
+		$this->assertTags($result, $expected);
+
+		$result = $this->form->radio('gender', array('value' => 'f'), array());
+		$expected = array('input' => array(
+			'type' => 'radio', 'name' => 'gender', 'value' => 'f', 'checked' => 'checked'
+		));
+		$this->assertTags($result, $expected);
+
+
+		$result = $this->form->radio('gender', array(), array('m' => 'Male', 'f' => 'Female'));
+		$expected = array(
+			array('input' => array(
+				'type' => 'radio', 'name' => 'gender', 'id' => 'gender-Male', 'value' => 'm'
+			)),
+			array('label' => array('for' => 'gender-Male')),
+				'Male',
+			'/label',
+			array('input' => array(
+				'type' => 'radio', 'name' => 'gender', 'value' => 'f',
+				'id' => 'gender-Female', 'checked' => 'checked'
+			)),
+			array('label' => array('for' => 'gender-Female')),
+				'Female',
+			'/label',
+		);
+		$this->assertTags($result, $expected);
+	}
 }
 
 ?>
