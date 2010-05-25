@@ -26,24 +26,25 @@ class FormTest extends \lithium\test\Unit {
 		), array(
 			'template' => '<li{:wrap}>{:label}{:input}{:error}</li>'
 		));
-		$this->assertTags($result, array(
+		$expected = array(
 			array('li' => array()),
 				array('label' => array('for' => 'name')),
 					'Name',
 				'/label',
-				array('input' => array('type' => 'text', 'name' => 'name')),
+				array('input' => array('type' => 'text', 'name' => 'name', 'id' => 'name')),
 			'/li',
 			array('li' => array()),
-				array('input' => array('type' => 'text', 'name' => 'surname')),
+				array('input' => array('type' => 'text', 'name' => 'surname', 'id' => 'surname')),
 			'/li',
 			array('li' => array()),
 				array('label' => array('for' => 'present')),
 					'Present',
 				'/label',
 				array('input' => array('type' => 'hidden', 'value' => 0, 'name' => 'present')),
-				array('input' => array('type' => 'checkbox', 'value' => 1, 'name' => 'present')),
+				array('input' => array('type' => 'checkbox', 'value' => 1, 'name' => 'present', 'id' => 'present')),
 			'/li',
-		));
+		);
+		$this->assertTags($result, $expected);
 	}
 
 }
