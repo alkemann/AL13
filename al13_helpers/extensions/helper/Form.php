@@ -104,8 +104,10 @@ class Form extends \lithium\template\helper\Form {
 			$itemOptions = $options;
 			$itemOptions['id'] = $name.'-'.$label;
 			$itemOptions['value'] = $value;
+			$out .= '<div class="radio">';
 			$out .= $this->radio($name, $itemOptions, array());
 			$out .= $this->label($itemOptions['id'], $label);
+			$out .= '</div>';
 		}
 		return $out;
 	}

@@ -68,19 +68,23 @@ class FormTest extends \lithium\test\Unit {
 
 		$result = $this->form->radio('gender', array(), array('m' => 'Male', 'f' => 'Female'));
 		$expected = array(
-			array('input' => array(
-				'type' => 'radio', 'name' => 'gender', 'id' => 'gender-Male', 'value' => 'm'
-			)),
-			array('label' => array('for' => 'gender-Male')),
-				'Male',
-			'/label',
-			array('input' => array(
-				'type' => 'radio', 'name' => 'gender', 'value' => 'f',
-				'id' => 'gender-Female', 'checked' => 'checked'
-			)),
-			array('label' => array('for' => 'gender-Female')),
-				'Female',
-			'/label',
+			array('div' => array('class' => 'radio')),
+				array('input' => array(
+					'type' => 'radio', 'name' => 'gender', 'id' => 'gender-Male', 'value' => 'm'
+				)),
+				array('label' => array('for' => 'gender-Male')),
+					'Male',
+				'/label',
+			'/div',
+			array('div' => array('class' => 'radio')),
+				array('input' => array(
+					'type' => 'radio', 'name' => 'gender', 'value' => 'f',
+					'id' => 'gender-Female', 'checked' => 'checked'
+				)),
+				array('label' => array('for' => 'gender-Female')),
+					'Female',
+				'/label',
+			'/div',
 		);
 		$this->assertTags($result, $expected);
 	}
