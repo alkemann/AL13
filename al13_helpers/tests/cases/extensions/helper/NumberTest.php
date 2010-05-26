@@ -7,7 +7,7 @@
  * @license       http://opensource.org/licenses/bsd-license.php The BSD License
  */
 
-namespace al13_helpers\tests\cases;
+namespace al13_helpers\tests\cases\extensions\helper;
 
 use \al13_helpers\extensions\helper\Number;
 use \lithium\tests\mocks\template\helper\MockFormRenderer;

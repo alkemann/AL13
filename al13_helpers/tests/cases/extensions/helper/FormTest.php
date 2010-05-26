@@ -7,7 +7,7 @@
  *
  */
 
-namespace al13_helpers\tests\cases;
+namespace al13_helpers\tests\cases\extensions\helper;
 
 use \lithium\data\Model\Record;
 use \al13_helpers\extensions\helper\Form;
@@ -48,6 +48,9 @@ class FormTest extends \lithium\test\Unit {
 			'/li',
 		);
 		$this->assertTags($result, $expected);
+	//	$cov = xdebug_get_code_coverage();
+		//dt(array_keys($cov));
+	//	dt($cov['D:\www\lithium\libraries\al13\al13_helpers\extensions\helper\Form.php']);
 	}
 
 	public function testRadio() {

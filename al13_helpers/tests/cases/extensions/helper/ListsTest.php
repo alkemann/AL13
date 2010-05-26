@@ -7,7 +7,7 @@
  *
  */
 
-namespace al13_helpers\tests\cases;
+namespace al13_helpers\tests\cases\extensions\helper;
 
 use \al13_helpers\extensions\helper\Lists;
 use \lithium\tests\mocks\template\helper\MockFormRenderer;
