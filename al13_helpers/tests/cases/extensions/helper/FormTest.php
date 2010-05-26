@@ -19,9 +19,34 @@ class FormTest extends \lithium\test\Unit {
 		$this->form = new Form(array('context' => new MockFormRenderer()));
 	}
 
+	public function testAsField() {
+		$result = $this->form->fields('name', array('template' => '{:input}', 'label' => false));
+		$expected = '<input type="text" name="name" id="name" />';
+		$this->assertEqual($result, $expected);
+	}
+
+	public function testCheckbox() {
+		$result = $this->form->fields(array(
+			'student' => array(
+				'type' => 'checkbox'
+			)
+		));
+		$expected = array(
+			array('div' => array('class' => 'input checkbox')),
+				array('input' => array('type' => 'hidden', 'name' => 'student', 'value' => 0)),
+				array('input' => array('type' => 'checkbox', 'name' => 'student', 'value' => 1, 'id' => 'student')),
+				array('label' => array('for' => 'student')),
+					'Student',
+				'/label',
+			'/div',
+		);
+		$this->assertTags($result, $expected);
+	}
+
 	public function testMultipleFieldsWithOptions() {
 		$result = $this->form->fields(array(
 			'name',
+			'password',
 			'surname' => array('label' => false),
 			'present' => array('type' => 'checkbox')
 		), array(
@@ -33,6 +58,12 @@ class FormTest extends \lithium\test\Unit {
 					'Name',
 				'/label',
 				array('input' => array('type' => 'text', 'name' => 'name', 'id' => 'name')),
+			'/li',
+			array('li' => array('class' => 'input')),
+				array('label' => array('for' => 'password')),
+					'Password',
+				'/label',
+				array('input' => array('type' => 'password', 'name' => 'password', 'id' => 'password')),
 			'/li',
 			array('li' => array('class' => 'input')),
 				array('input' => array('type' => 'text', 'name' => 'surname', 'id' => 'surname')),
@@ -48,9 +79,6 @@ class FormTest extends \lithium\test\Unit {
 			'/li',
 		);
 		$this->assertTags($result, $expected);
-	//	$cov = xdebug_get_code_coverage();
-		//dt(array_keys($cov));
-	//	dt($cov['D:\www\lithium\libraries\al13\al13_helpers\extensions\helper\Form.php']);
 	}
 
 	public function testRadio() {
