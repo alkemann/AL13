@@ -45,6 +45,7 @@ class Helper extends \lithium\template\Helper {
 	);
 
 	public function tag($tag, $options = array()) {
+		if ($tag == 'link' && !isset($options['options'])) $options['options'] = array();
 		return $this->_render(__METHOD__, $tag, $options, array('escape' => false));
 	}
 }
