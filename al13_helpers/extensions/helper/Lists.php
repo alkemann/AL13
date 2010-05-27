@@ -114,15 +114,30 @@ class Lists extends \al13_helpers\extensions\helper\Helper {
 
 	private $_items = array('main' => array());
 
+	/**
+	 * Generate a list of links for pagination
+	 *
+	 * @param int $total
+	 * @param int $limit
+	 * @param int $page
+	 * @return string Generated HTML
+	 */
 	public function pagination($total, $limit, $page) {
-		$ret = '<ul id="actions"><li>';
+		$ret = '<ul class="actions"><li>';
 
 		if ($total <= $limit || $page == 1) {
-			$ret .= '<<-First</li><li><-Previous';
+			$ret .= 'First</li><li>Previous';
 		} else {
-			$ret .= $this->html->link('<<-First', array('action' => 'index', 'args' => array('page:1','limit:'.$limit)));
+			$ret .= $this->tag('link', array('title' => 'First',
+				'url' => array('action' => 'index', 'args' => array('page:1','limit:'.$limit))
+			));
 			$ret .= '</li><li>';
-			$ret .= $this->html->link('<-Previous', array('action' => 'index', 'args' => array('page:'.($page-1),'limit:'.$limit)));
+			$ret .= $this->tag('link', array('title' => 'Previous',
+				'url' => array(
+					'action' => 'index',
+					'args' => array('page:'.($page-1),'limit:'.$limit)
+				)
+			));
 		}
 		$ret .= '</li>';
 
@@ -133,21 +148,31 @@ class Lists extends \al13_helpers\extensions\helper\Helper {
 			if ($p == $page) {
 				$ret .= '['.$p.']';
 			} else {
-				$ret .= $this->html->link('['.$p.']', array('action' => 'index', 'args' => array('page:'.$p,'limit:'.$limit)));
+				$ret .= $this->tag('link', array('title' => '['.$p.']',
+					'url' => array('action' => 'index', 'args' => array('page:'.$p,'limit:'.$limit))
+				));
 			}
 			$ret .= '</li>';
 		}
 		$ret .= '<li>';
 		if ($total <= $limit || $page == $p) {
-			$ret .= 'Next-></li><li>Last->>';
+			$ret .= 'Next</li><li>Last';
 		} else {
-			$ret .= $this->html->link('Next->', array('action' => 'index', 'args' => array('page:'.($page+1),'limit:'.$limit)));
+			$ret .= $this->tag('link', array('title' => 'Next',
+					'url' =>  array(
+						'action' => 'index',
+						'args' => array('page:'.($page+1),'limit:'.$limit)
+					)
+				));
 			$ret .= '</li><li>';
-			$ret .= $this->html->link('Last->>', array('action' => 'index', 'args' => array('page:'.$p,'limit:'.$limit)));
+			$ret .= $this->tag('link', array('title' => 'Last',
+					'url' =>  array('action' => 'index', 'args'=>array('page:'.$p,'limit:'.$limit))
+				));
 		}
 		$ret .= '</li></ul>';
 		return $ret;
 	}
+
 	/**
 	 * Adds a menu item to a target location
 	 *
@@ -270,7 +295,7 @@ class Lists extends \al13_helpers\extensions\helper\Helper {
 		else
 			$ulAttributes = array();
 
-		/* DOM class attribute for outer UL */
+		// DOM class attribute for outer UL
 		if (isset($options['class'])) {
 			$ulAttributes['class'] = $options['class'];
 		} else {
@@ -281,13 +306,13 @@ class Lists extends \al13_helpers\extensions\helper\Helper {
 			}
 		}
 
-		/* DOM element id for outer UL */
+		// DOM element id for outer UL
 		if (isset($options['id'])) {
 			$ulAttributes['id'] = $options['id'];
 		}
 
 		$menu = array();
-		/* Find source menu */
+		// Find source menu
 		if (is_array($source)) {
 
 			$depth = count($source);
@@ -321,7 +346,7 @@ class Lists extends \al13_helpers\extensions\helper\Helper {
 			$here = $requestObj->url;
 		}
 
-		/* Generate menu items */
+		// Generate menu items
 		foreach ($menu as $key => $item) {
 			$liAttributes = array();
 			$aAttributes = array();
@@ -336,7 +361,7 @@ class Lists extends \al13_helpers\extensions\helper\Helper {
 					$menusource = array($menusource);
 				}
 				$menusource[] = $key;
-				/* Don't set DOM element id on sub menus */
+				// Don't set DOM element id on sub menus */
 				if (isset($options['id'])) {
 					unset($options['id']);
 				}
@@ -401,10 +426,10 @@ class Lists extends \al13_helpers\extensions\helper\Helper {
 				array('content' => $listitem,'options' => $liAttributes));
 		}
 
-		/* Generate menu */
+		// Generate menu
 		$out .= $this->tag('list', array('content' => $list, 'options' => $ulAttributes));
 
-		/* Add optional outer div */
+		// Add optional outer div
 		if (isset($options['div']) && $options['div'] !== false) {
 			$divOptions = array();
 			if (is_array($options['div'])) {
@@ -414,6 +439,6 @@ class Lists extends \al13_helpers\extensions\helper\Helper {
 		}
 		return $out;
 	}
-
 }
+
 ?>

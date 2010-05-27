@@ -443,6 +443,135 @@ class ListsTest extends \lithium\test\Unit {
     	$res = $this->lists->generate(34);
     }
 
+    function testPagination() {
+    	$result = $this->lists->pagination(12,3,1);
+    	$expected = array(
+    		array('ul' => array('class' => 'actions')),
+    			'<li',
+    				'First',
+    			'/li',
+    			'<li',
+    				'Previous',
+    			'/li',
+    			'<li',
+    				'[1]',
+    			'/li',
+    			'<li',
+    				array('a' => array('href' => $this->base .'posts/index/page:2/limit:3')),
+    					'[2]',
+    				'/a',
+    			'/li',
+    			'<li',
+    				array('a' => array('href' => $this->base .'posts/index/page:3/limit:3')),
+    					'[3]',
+    				'/a',
+    			'/li',
+    			'<li',
+    				array('a' => array('href' => $this->base .'posts/index/page:4/limit:3')),
+    					'[4]',
+    				'/a',
+    			'/li',
+    			'<li',
+    				array('a' => array('href' => $this->base .'posts/index/page:2/limit:3')),
+    					'Next',
+    				'/a',
+    			'/li',
+    			'<li',
+    				array('a' => array('href' => $this->base .'posts/index/page:4/limit:3')),
+    					'Last',
+    				'/a',
+    			'/li',
+    		'/ul'
+    	);
+    	$this->assertTags($result, $expected);
+
+    	$result = $this->lists->pagination(12,3,3);
+    	$expected = array(
+    		array('ul' => array('class' => 'actions')),
+    			'<li',
+    				array('a' => array('href' => $this->base .'posts/index/page:1/limit:3')),
+    					'First',
+    				'/a',
+    			'/li',
+    			'<li',
+    				array('a' => array('href' => $this->base .'posts/index/page:2/limit:3')),
+    					'Previous',
+    				'/a',
+    			'/li',
+    			'<li',
+    				array('a' => array('href' => $this->base .'posts/index/page:1/limit:3')),
+    					'[1]',
+    				'/a',
+    			'/li',
+    			'<li',
+    				array('a' => array('href' => $this->base .'posts/index/page:2/limit:3')),
+    					'[2]',
+    				'/a',
+    			'/li',
+    			'<li',
+    				'[3]',
+    			'/li',
+    			'<li',
+    				array('a' => array('href' => $this->base .'posts/index/page:4/limit:3')),
+    					'[4]',
+    				'/a',
+    			'/li',
+    			'<li',
+    				array('a' => array('href' => $this->base .'posts/index/page:4/limit:3')),
+    					'Next',
+    				'/a',
+    			'/li',
+    			'<li',
+    				array('a' => array('href' => $this->base .'posts/index/page:4/limit:3')),
+    					'Last',
+    				'/a',
+    			'/li',
+    		'/ul'
+    	);
+    	$this->assertTags($result, $expected);
+
+    	$result = $this->lists->pagination(12,3,4);
+    	$expected = array(
+    		array('ul' => array('class' => 'actions')),
+    			'<li',
+    				array('a' => array('href' => $this->base .'posts/index/page:1/limit:3')),
+    					'First',
+    				'/a',
+    			'/li',
+    			'<li',
+    				array('a' => array('href' => $this->base .'posts/index/page:3/limit:3')),
+    					'Previous',
+    				'/a',
+    			'/li',
+    			'<li',
+    				array('a' => array('href' => $this->base .'posts/index/page:1/limit:3')),
+    					'[1]',
+    				'/a',
+    			'/li',
+    			'<li',
+    				array('a' => array('href' => $this->base .'posts/index/page:2/limit:3')),
+    					'[2]',
+    				'/a',
+    			'/li',
+    			'<li',
+    				array('a' => array('href' => $this->base .'posts/index/page:3/limit:3')),
+    					'[3]',
+    				'/a',
+    			'/li',
+    			'<li',
+    				'[4]',
+    			'/li',
+    			'<li',
+    				'Next',
+    			'/li',
+    			'<li',
+    				'Last',
+    			'/li',
+    		'/ul'
+    	);
+    	$this->assertTags($result, $expected);
+    }
+
 }
 
 ?>
