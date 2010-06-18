@@ -335,6 +335,12 @@ class Lists extends \al13_helpers\extensions\helper\Helper {
 				$menu = &$this->items[$source];
 			}
 		}
+
+		if (isset($options['reverse']) && $options['reverse'] == true) {
+			unset($options['reverse']);
+			$menu = array_reverse($menu);
+		}
+
 		$requestObj = $this->_context->request();
 		if (isset($options['active']['strict']) && !$options['active']['strict']) {
 			$requestParams = $requestObj->params;
