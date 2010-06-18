@@ -428,8 +428,12 @@ class Lists extends \al13_helpers\extensions\helper\Helper {
 				$listitem = $this->tag('block',
 						array('content' => $listitem,'options' => $divOptions));
 			}
-			$list .= $this->tag('list-item',
-				array('content' => $listitem,'options' => $liAttributes));
+			if (substr($listitem,0,3) == '<ul') {
+				$list .= $listitem;
+			} else {
+				$list .= $this->tag('list-item',
+					array('content' => $listitem,'options' => $liAttributes));	
+			}
 		}
 
 		// Generate menu
