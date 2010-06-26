@@ -28,7 +28,7 @@ use \lithium\net\http\Router;
  * Description :
  *
  * To understand how this helper works there are two important concepts. Firstly, in a single
- * run of cakephp, only one instance of any helper is used. There for we can temporarily "store"
+ * run of lithium, only one instance of any helper is used. There for we can temporarily "store"
  * information in it (as a property) between views, elements and layouts. In the most common
  * use of this helper, links are created in the view and in elements and then the layout renders
  * them. The reason why this works is the second important concept; the layout is rendered after
@@ -45,30 +45,7 @@ use \lithium\net\http\Router;
  * echo $menu->generate('link_list');
  * }}}
  *
- * Usage example 2: Replacing the baked html links with a context sensitive menu
- *
- * A typical use is compromised of several $menu->add( and a single echo $menu->generate(
- *
- * For instance to add a context sensitive menu to replace the $html->link() baked by cake
- * in default follow these steps:
- *
- * 1. In app/views/layouts/default.ctp just inside the #content div add this line :
- *      if (isset($menu)) { echo $menu->generate('context'); }
- * 2. Copy the files from cake/console/libs/templates/views to app/vendors/shells/templates/views
- * 3. Inside those 3 files replace
- * {{{
- *      "echo $html->link("
- *         with
- *      "$menu->add('context', array("
- *         and
- * }}}
- *    add a ) to the end.
- * 4. Remove the div, ul and li parts that surrounded these links.
- * 5. Add this css rule ul.menu_context li { list-style: none; }
- *
- * Now all these links that used to be echoed in the view, will be printed as a ul on top of the layout.
- *
- * Usage example 3: A multilevel list
+ * Usage example 2: A multilevel list
  * {{{
  * //Say we have an Article with hasMany Page, to render a list of links to both we could do :
  * foreach ($data as $article) {
@@ -87,15 +64,15 @@ use \lithium\net\http\Router;
  * {{{
  * <ul>
  * <li><a href="/articles/view/1">Article 1</a></li>
- * <li><ul>
+ * <ul>
  * 	<li><a href="/pages/view/1">Page 1</a></li>
  * 	<li><a href="/pages/view/2">Page 2</a></li>
  * </ul></li>
  * <li><a href="/articles/view/2">Article 2</a></li>
- * <li><ul>
+ * <ul>
  * 	<li><a href="/pages/view/3">Page 3</a></li>
  * 	<li><a href="/pages/view/4">Page 4</a></li>
- * </ul></li>
+ * </ul>
  * </ul>
  * }}}
  *
