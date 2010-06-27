@@ -16,7 +16,7 @@ namespace al13_helpers\extensions\helper;
  *
  * Methods to make numbers more readable.
  */
-class Number extends \al13_helpers\extensions\helper\Helper {
+class Number extends \al13_helpers\extensions\Helper {
 /**
  * Formats a number with a level of precision.
  *

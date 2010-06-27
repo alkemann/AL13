@@ -92,8 +92,7 @@
 namespace al13_helpers\extensions\helper;
 
 use lithium\net\http\Router;
-
-class Lists extends \al13_helpers\extensions\helper\Helper {
+class Lists extends \al13_helpers\extensions\Helper {
 
 	private $_items = array('main' => array());
 

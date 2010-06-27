@@ -14,7 +14,7 @@ namespace al13_helpers\extensions\helper;
  *
  * Manipulation of time data.
  */
-class Time extends \al13_helpers\extensions\helper\Helper {
+class Time extends \al13_helpers\extensions\Helper {
 /**
  * Converts given time (in server's time zone) to user's local time, given his/her offset from GMT.
  *

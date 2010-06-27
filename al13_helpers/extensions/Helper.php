@@ -6,7 +6,7 @@
  * @license       http://opensource.org/licenses/bsd-license.php The BSD License
  */
 
-namespace al13_helpers\extensions\helper;
+namespace al13_helpers\extensions;
 
 /**
  * Base helper for all helpers in this package
