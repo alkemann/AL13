@@ -55,7 +55,7 @@ use lithium\net\http\Router;
  * 	)));
  * 	foreach ($article->pages as $page) {
  * 		$menu->add(
- * 			array('articles', $article->id),
+ * 			array('articles', $article->className),
  * 			array($page->title, array(
  * 				'controller'=> 'pages', 'action' => 'view', $page->id
  * 			)
@@ -67,14 +67,14 @@ use lithium\net\http\Router;
  *
  * This will generate this:
  * {{{
- *  <ul>
+ *  <ul class="menu_articles">
  *  <li><a href="/articles/view/1">Article 1</a></li>
- *  <ul>
+ *  <ul class="menu_art_1_class_name">
  *  	<li><a href="/pages/view/1">Page 1</a></li>
  *  	<li><a href="/pages/view/2">Page 2</a></li>
- *  </ul></li>
+ *  </ul>
  *  <li><a href="/articles/view/2">Article 2</a></li>
- *  <ul>
+ *  <ul class="menu_art_2_class_name">
  *  	<li><a href="/pages/view/3">Page 3</a></li>
  *  	<li><a href="/pages/view/4">Page 4</a></li>
  *  </ul>
