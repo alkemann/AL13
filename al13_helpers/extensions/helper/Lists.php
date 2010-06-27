@@ -6,6 +6,10 @@
  * @license       http://opensource.org/licenses/bsd-license.php The BSD License
  *
  */
+namespace al13_helpers\extensions\helper;
+
+use lithium\net\http\Router;
+
 /**
  * The purpose of this helper is to generate menus and other lists of links. The dynamic api
  * lets you build any amount of multi level "menus". Created for the purpose of main, sub and
@@ -34,10 +38,10 @@
  *
  * Usage example 1: _Creating a list and rendering it_
  * {{{
- * //We have a list of links stored in the database and on this view we wish to list them out.
- * // A single link array looks like this : array(Link => array(url, title))
+ * // We have a list of links stored in the database and on this view we wish to list them out.
+ * // $links being a collection of entities with at the properties 'url' and 'title':
  * foreach ($links as $link) {
- * 	$menu->add('link_list', array($link['title'], $link['url']));
+ * 	$menu->add('link_list', array($link->title, $link->url));
  * }
  * echo $menu->generate('link_list');
  * }}}
@@ -46,14 +50,14 @@
  * {{{
  * // Say we have an Article with hasMany Page, to render a list of links to both we could do :
  * foreach ($data as $article) {
- * 	$menu->add('articles', array($article['Article']['title'], array(
- * 		'action' =>'view', $article['Article']['id']
+ * 	$menu->add('articles', array($article->title, array(
+ * 		'action' =>'view', $article->id
  * 	)));
- * 	foreach ($article['Page'] as $page) {
+ * 	foreach ($article->pages as $page) {
  * 		$menu->add(
- * 			array('articles', $article['Article']['id']),
- * 			array($page['Page']['title'], array(
- * 				'controller'=> 'pages', 'action' => 'view', $page['Page']['id']
+ * 			array('articles', $article->id),
+ * 			array($page->title, array(
+ * 				'controller'=> 'pages', 'action' => 'view', $page->id
  * 			)
  * 		));
  * 	}
@@ -86,12 +90,9 @@
  * specifics.
  *
  * @author Alexander Morland aka alkemann
- * @modified 12.may 2010
+ * @modified 27.june 2010
  * @version 0.3
  */
-namespace al13_helpers\extensions\helper;
-
-use lithium\net\http\Router;
 class Lists extends \al13_helpers\extensions\Helper {
 
 	private $_items = array('main' => array());
