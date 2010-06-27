@@ -6,26 +6,23 @@
  * @license       http://opensource.org/licenses/bsd-license.php The BSD License
  *
  */
-
-namespace al13_helpers\extensions\helper;
-
-use \lithium\net\http\Router;
-
 /**
  * The purpose of this helper is to generate menus and other lists of links. The dynamic api
  * lets you build any amount of multi level "menus". Created for the purpose of main, sub and
- * context sensitive menues, this helper can also be used as an html UL generator.
+ * context sensitive menues, this helper can also be used as an HTML `<ul />` generator.
  *
  * Installation and requirements:
  *
- * - add the AL13_helpers library to your app by
- * - placing the al13_helpers folder either in your /lithium/libraries/ folder
- *   or in your /app/libraries/ folder, or somewhere else, but then you must
- *   supply a 'path' argument to:
- * - in /app/config/bootstrap/libraries.php add Libraries::add('al13_helpers');
- * - and it is ready to use in view with autoloading by $this->lists->*
+ * - Add the AL13_helpers library to your app by placing the `al13_helpers` folder either in your
+ *   `/lithium/libraries` folder
+ *   or in your `/app/libraries/` folder, or somewhere else, but then you must
+ *   supply a `'path'` argument, too.
  *
- * Description :
+ * - In `/app/config/bootstrap/libraries.php` add `Libraries::add('al13_helpers');`
+ *
+ * - And it is ready to use in view with autoloading by `$this->lists->*`
+ *
+ * **Description**
  *
  * To understand how this helper works there are two important concepts. Firstly, in a single
  * run of lithium, only one instance of any helper is used. There for we can temporarily "store"
@@ -35,58 +32,67 @@ use \lithium\net\http\Router;
  * the view. Therefore we can add to the list of urls in when the layout is rendered, the menu
  * helper already know all that it is to render.
  *
- * Usage example 1: Creating a list and rendering it
+ * Usage example 1: _Creating a list and rendering it_
  * {{{
  * //We have a list of links stored in the database and on this view we wish to list them out.
- * // A single link array looks like this : array(Link => array(url,title))
+ * // A single link array looks like this : array(Link => array(url, title))
  * foreach ($links as $link) {
- * 		$menu->add('link_list',array($link['title'],$link['url']));
+ * 	$menu->add('link_list', array($link['title'], $link['url']));
  * }
  * echo $menu->generate('link_list');
  * }}}
  *
- * Usage example 2: A multilevel list
+ * Usage example 2: _A multilevel list_
  * {{{
- * //Say we have an Article with hasMany Page, to render a list of links to both we could do :
+ * // Say we have an Article with hasMany Page, to render a list of links to both we could do :
  * foreach ($data as $article) {
- * 		$menu->add('articles', array($article['Article']['title'],
- * 				array('action'=>'view', $article['Article']['id'])));
- * 		foreach ($article['Page'] as $page) {
- * 			$menu->add(array('articles', $article['Article']['id']), array(
- * 				$page['Page']['title'], array('controller'=> 'pages',
- * 				'action' => 'view', $page['Page']['id'])));
- * 		}
+ * 	$menu->add('articles', array($article['Article']['title'], array(
+ * 		'action' =>'view', $article['Article']['id']
+ * 	)));
+ * 	foreach ($article['Page'] as $page) {
+ * 		$menu->add(
+ * 			array('articles', $article['Article']['id']),
+ * 			array($page['Page']['title'], array(
+ * 				'controller'=> 'pages', 'action' => 'view', $page['Page']['id']
+ * 			)
+ * 		));
+ * 	}
  * }
  * echo $menu->generate('articles');
  * }}}
  *
- * This will genreate this :
+ * This will generate this:
  * {{{
- * <ul>
- * <li><a href="/articles/view/1">Article 1</a></li>
- * <ul>
- * 	<li><a href="/pages/view/1">Page 1</a></li>
- * 	<li><a href="/pages/view/2">Page 2</a></li>
- * </ul></li>
- * <li><a href="/articles/view/2">Article 2</a></li>
- * <ul>
- * 	<li><a href="/pages/view/3">Page 3</a></li>
- * 	<li><a href="/pages/view/4">Page 4</a></li>
- * </ul>
- * </ul>
+ *  <ul>
+ *  <li><a href="/articles/view/1">Article 1</a></li>
+ *  <ul>
+ *  	<li><a href="/pages/view/1">Page 1</a></li>
+ *  	<li><a href="/pages/view/2">Page 2</a></li>
+ *  </ul></li>
+ *  <li><a href="/articles/view/2">Article 2</a></li>
+ *  <ul>
+ *  	<li><a href="/pages/view/3">Page 3</a></li>
+ *  	<li><a href="/pages/view/4">Page 4</a></li>
+ *  </ul>
+ *  </ul>
  * }}}
  *
- * Customizations :
+ * **Customizations**
  *
- * If you wish to style the menus, take a look at the generated source code, each UL level
+ * If you wish to style the menus, take a look at the generated source code, each `<ul />` level
  * is given a unique class based on the target name. If you have need of more fine control,
- * you can use the $options paramter of the helpers methods to use image icons, class on
- * the A tags, id, class or style LI, UL and DIVs. See each method for specifics.
+ * you can use the `$options` paramter of the helpers methods to use image icons, class on
+ * the `<a />` tags, id, class or style `<li />`, `<ul />` and `<div />`s. See each method for
+ * specifics.
  *
  * @author Alexander Morland aka alkemann
  * @modified 12.may 2010
  * @version 0.3
  */
+namespace al13_helpers\extensions\helper;
+
+use lithium\net\http\Router;
+
 class Lists extends \al13_helpers\extensions\helper\Helper {
 
 	private $_items = array('main' => array());
