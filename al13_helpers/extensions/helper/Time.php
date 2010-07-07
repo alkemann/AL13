@@ -20,111 +20,159 @@ use \DateInterval;
 class Time extends \al13_helpers\extensions\Helper {
 
 	const DAY = 86400;
-
 	const HOUR = 3600;
 
 	/**
-	 * Converts given time (in server's time zone) to user's local time, given his/her offset from
-	 * GMT.
+	 * Question if supplied date is 'today', 'yesterday', 'this week' etc
 	 *
-	 * @param string $serverTime UNIX timestamp
-	 * @param int $userOffset User's offset from GMT (in hours)
-	 * @return string UNIX timestamp
+	 * @param string $question
+	 * @param mixed $date string|int|null
+	 * @param array $options
+	 * return boolean
 	 */
-	public function convert($serverTime, $userOffset) {
-		$serverOffset = $this->serverOffset();
-		$gmtTime = $serverTime - $serverOffset;
-		$userTime = $gmtTime + $userOffset * (60*60);
-		return $userTime;
+	public function is($question, $date = null, array $options = array()) {	
+		switch ($question) {
+			case 'leap year' :	
+				$date = $date ?: date('Y-m-d H:i:s');
+				$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
+				return $date->format('L');				
+			break;
+			default :
+				return $this->_relativeCheck($question, $date, $options);
+			break;
+		}
 	}
 
 	/**
-	 * Returns server's offset from GMT in seconds.
+	 * Convert given date (or current if null) to 'nice', 'short' or 'words' etc
 	 *
-	 * @return int Offset
+	 * @param string $type
+	 * @param mixed $date string|int|null
+	 * @param array $options
+	 * return string 
 	 */
-	public function serverOffset() {
-		return date('Z');
+	public function to($type, $date = null, array $options = array()) {
+		switch ($type) {
+			case 'format' : 
+				if (!isset($options['format'])) return null;
+				return $this->format($options['format'], $date);
+			break;
+			case 'nice':
+				$offset = (isset($options['offset'])) ? $options['offset'] : 0;
+				return $this->_nice($date, $offset);
+			break;
+			case 'niceShort' : 
+			case 'short' :
+				$offset = (isset($options['offset'])) ? $options['offset'] : 0;
+				return $this->_short($date, $offset);
+			break;
+			case 'unix' : case 'Unix' : case 'UNIX' :
+				if ($date == null) return time();
+				$date = $date ?: date('Y-m-d H:i:s');
+				$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
+				return $date->format('U');
+			break;
+			case 'rss' : case 'Rss' : case 'RSS' :
+				$date = $date ?: date('Y-m-d H:i:s');
+				$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
+				return $date->format(DateTime::RSS);
+			break;
+			case 'atom' : case 'Atom' : case 'ATOM' :
+				$date = $date ?: date('Y-m-d H:i:s');
+				$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
+				return $date->format(DateTime::ATOM);
+			break;
+			case 'cookie' : case 'Cookie' : case 'COOKIE' :
+				$date = $date ?: date('Y-m-d H:i:s');
+				$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
+				return $date->format(DateTime::COOKIE);
+			break;
+			case 'words' : 
+			case 'timeAgoInWords' : 
+			case 'relative' :
+			default:
+				return $this->_words($date, $options);
+			break;
+		}	
+	}
+		
+	/**
+	 *
+	 * @param string $format
+	 * @param mixed $data string|int|null
+	 * @return string
+	 */
+	public function format($format, $date = null) {		
+		$date = $date ?: date('Y-m-d H:i:s');
+		$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
+		return $date->format($format);
 	}
 
-	/**
-	 * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
-	 *
-	 * @param string $dateString Datetime string
-	 * @param int $userOffset User's offset from GMT (in hours)
-	 * @return string Parsed timestamp
-	 */
-	public function fromString($dateString, $userOffset = null) {
-		if (empty($dateString)) {
-			return false;
-		}
-		if (is_integer($dateString) || is_numeric($dateString)) {
-			$date = intval($dateString);
-		} else {
-			$date = strtotime($dateString);
-		}
-		if ($userOffset !== null) {
-			return $this->convert($date, $userOffset);
-		}
-		return $date;
+	private function _relativeCheck($question, $date = null, array $options = array()) {
+		$defaults = array('offset' => 0, 'now' => date('Y-m-d H:i:s'));
+		$options += $defaults;
+		$now = $options['now'];
+		$date = $date ?: date('Y-m-d H:i:s');
+		$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
+		$now = new DateTime(is_int($now) ? date('Y-m-d H:i:s', $now) : $now);
+		switch ($question) {
+			case 'today' :
+				return $date->format('dmy') == $now->format('dmy');
+			break;
+			case 'tomorrow' :	
+				$now->add(DateInterval::createFromDateString('1 day'));
+				return $date->format('dmy') == $now->format('dmy');
+			break;
+			case 'yesterday' :	
+				$now->add(DateInterval::createFromDateString('-1 day'));
+				return $date->format('dmy') == $now->format('dmy');
+			break;
+			case 'this week' :
+				return $date->format('Wy') == $now->format('Wy');
+			break;
+			case 'this month' :
+				return $date->format('my') == $now->format('my');
+			break;
+			case 'this year' :
+				return $date->format('y') == $now->format('y');
+			break;
+		}	
+		throw new \Exception('Illegal $question parameter');
+		return null;
 	}
-
-	/**
-	 * Returns a nicely formatted date string for given Datetime string.
-	 *
-	 * @param mixed $date Datetime string or Unix timestamp
-	 * @param int $userOffset User's offset from GMT (in hours)
-	 * @return string Formatted date string
-	 */
-	public function nice($date = null, $userOffset = 0) {
+	
+	private function _nice($date, $offset = 0) {
 		$date = $date ?: date('Y-m-d H:i:s');
 		$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
 
-		if ($userOffset) {
-			$date->add(DateInterval::createFromDateString("{$userOffset} hours"));
+		if ($offset) {
+			$date->add(DateInterval::createFromDateString("{$offset} hours"));
 		}
 		return $date->format('D, M jS Y, H:i');
 	}
-
-	public function output($str) {
-		return $str;
-	}
-
-	/**
-	 * Returns a formatted descriptive date string for given datetime string.
-	 *
-	 * If the given date is today, the returned string could be "Today, 16:54".
-	 * If the given date was yesterday, the returned string could be "Yesterday, 16:54".
-	 * If $dateString's year is the current year, the returned string does not
-	 * include mention of the year.
-	 *
-	 * @param string $dateString Datetime string or Unix timestamp
-	 * @param int $userOffset User's offset from GMT (in hours)
-	 * @return string Described, relative date string
-	 */
-	public function niceShort($date = null, $userOffset = 0) {
+		
+	private function _short($date = null, $offset = 0) {
+		$now = new DateTime();
 		$date = $date ?: date('Y-m-d H:i:s');
 		$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
 	
-		if ($userOffset) {
-			$date->add(DateInterval::createFromDateString("{$userOffset} hours"));
+		if ($offset) {
+			$date->add(DateInterval::createFromDateString("{$offset} hours"));
 		}
-		
-		$diff = $date->diff(new DateTime());
+		$diff = $date->diff($now);
 		$y = ($diff->format('%y') != 0) ? ' Y' : '';
-
-		$dayDiff = $diff->format('%d');
+		$onlyDay = ($diff->format('%y%m') == '00');
 		$dayDirection = $diff->format('%R');
 		switch (true) {
-			case ($dayDiff == 0) :
+			case ($diff->d == 0 && $onlyDay) :
 				$text = 'Today, %s';
 				$format = 'H:i';
 			break;
-			case ($dayDiff == 1 && $dayDirection == '+') :
+			case ($diff->d == 1 && $dayDirection == '+' && $onlyDay) :
 				$text = 'Yesterday, %s';
 				$format = 'H:i';
 			break;
-			case ($dayDiff == 1 && $dayDirection == '-') :
+			case ($diff->d == 1 && $dayDirection == '-' && $onlyDay) :
 				$text = 'Tomorrow, %s';
 				$format = 'H:i';
 			break;
@@ -137,219 +185,22 @@ class Time extends \al13_helpers\extensions\Helper {
 			$ret = sprintf($text, $ret);
 		return $ret;
 	}
-
-	/**
-	 * Returns a partial SQL string to search for all records between two dates.
-	 *
-	 * @param string $dateString Datetime string or Unix timestamp
-	 * @param string $end Datetime string or Unix timestamp
-	 * @param string $fieldName Name of database field to compare with
-	 * @param int $userOffset User's offset from GMT (in hours)
-	 * @return string Partial SQL string.
-	 */
-	public function daysAsSql($begin, $end, $fieldName, $userOffset = null) {
-		$begin = $this->fromString($begin, $userOffset);
-		$end = $this->fromString($end, $userOffset);
-		$begin = date('Y-m-d', $begin) . ' 00:00:00';
-		$end = date('Y-m-d', $end) . ' 23:59:59';
-
-		$ret  ="($fieldName >= '$begin') AND ($fieldName <= '$end')";
-		return $this->output($ret);
-	}
-
-	/**
-	 * Returns a partial SQL string to search for all records between two times
-	 * occurring on the same day.
-	 *
-	 * @param string $dateString Datetime string or Unix timestamp
-	 * @param string $fieldName Name of database field to compare with
-	 * @param int $userOffset User's offset from GMT (in hours)
-	 * @return string Partial SQL string.
-	 */
-	public function dayAsSql($dateString, $fieldName, $userOffset = null) {
-		$date = $this->fromString($dateString, $userOffset);
-		$ret = $this->daysAsSql($dateString, $dateString, $fieldName);
-		return $this->output($ret);
-	}
-
-	/**
-	 * Returns `true` if given datetime string is today.
-	 *
-	 * @param string $dateString Datetime string or Unix timestamp
-	 * @param int $userOffset User's offset from GMT (in hours)
-	 * @return boolean Returns `true` if datetime string is today.
-	 */
-	public function isToday($dateString, $userOffset = null) {
-		return date('Y-m-d', $this->fromString($dateString, $userOffset)) == date('Y-m-d');
-	}
-
-	/**
-	 * Returns `true` if given datetime string is within this week.
-	 *
-	 * @param string $dateString
-	 * @param int $userOffset User's offset from GMT (in hours)
-	 * @return boolean True if datetime string is within current week
-	 */
-	public function isThisWeek($dateString, $userOffset = null) {
-		return date('W Y', $this->fromString($dateString, $userOffset)) == date('W Y', time());
-	}
-
-	/**
-	 * Returns true if given datetime string is within this month.
-	 *
-	 * @param string $dateString
-	 * @param int $userOffset User's offset from GMT (in hours)
-	 * @return boolean True if datetime string is within current month
-	 */
-	public function isThisMonth($dateString, $userOffset = null) {
-		$date = $this->fromString($dateString);
-		return date('m Y',$date) == date('m Y', time());
-	}
-
-	/**
-	 * Returns `true` if given datetime string is within current year.
-	 *
-	 * @param string $dateString Datetime string or Unix timestamp
-	 * @return boolean True if datetime string is within current year
-	 */
-	public function isThisYear($dateString, $userOffset = null) {
-		$date = $this->fromString($dateString, $userOffset);
-		return  date('Y', $date) == date('Y');
-	}
-
-	/**
-	 * Returns `true` if given datetime string was yesterday.
-	 *
-	 * @param string $dateString Datetime string or Unix timestamp
-	 * @param int $userOffset User's offset from GMT (in hours)
-	 * @return boolean True if datetime string was yesterday
-	 */
-	public function wasYesterday($dateString, $userOffset = null) {
-		$date = $this->fromString($dateString, $userOffset);
-		return date('Y-m-d', $date) == date('Y-m-d', strtotime('yesterday'));
-	}
-
-	/**
-	 * Returns true if given datetime string is tomorrow.
-	 *
-	 * @param string $dateString Datetime string or Unix timestamp
-	 * @param int $userOffset User's offset from GMT (in hours)
-	 * @return boolean True if datetime string was yesterday
-	 */
-	public function isTomorrow($dateString, $userOffset = null) {
-		$date = $this->fromString($dateString, $userOffset);
-		return date('Y-m-d', $date) == date('Y-m-d', strtotime('tomorrow'));
-	}
-
-	/**
-	 * Returns the quarter
-	 * @param string $dateString
-	 * @param boolean $range if true returns a range in Y-m-d format
-	 * @return boolean True if datetime string is within current week
-	 */
-	public function toQuarter($dateString, $range = false) {
-		$time = $this->fromString($dateString);
-		$date = ceil(date('m', $time) / 3);
-
-		if ($range === true) {
-			$range = 'Y-m-d';
-		}
-
-		if ($range !== false) {
-			$year = date('Y', $time);
-
-			switch ($date) {
-				case 1:
-					$date = array($year.'-01-01', $year.'-03-31');
-					break;
-				case 2:
-					$date = array($year.'-04-01', $year.'-06-30');
-					break;
-				case 3:
-					$date = array($year.'-07-01', $year.'-09-30');
-					break;
-				case 4:
-					$date = array($year.'-10-01', $year.'-12-31');
-					break;
-			}
-		}
-		return $this->output($date);
-	}
-
-	/**
-	 * Returns a UNIX timestamp from a textual datetime description. Wrapper for PHP function strtotime().
-	 *
-	 * @param string $dateString Datetime string to be represented as a Unix timestamp
-	 * @param int $userOffset User's offset from GMT (in hours)
-	 * @return integer Unix timestamp
-	 */
-	public function toUnix($dateString, $userOffset = null) {
-		$ret = $this->fromString($dateString, $userOffset);
-		return $this->output($ret);
-	}
-
-	/**
-	 * Returns a date formatted for Atom RSS feeds.
-	 *
-	 * @param string $dateString Datetime string or Unix timestamp
-	 * @param int $userOffset User's offset from GMT (in hours)
-	 * @return string Formatted date string
-	 */
-	public function toAtom($dateString, $userOffset = null) {
-		$date = $this->fromString($dateString, $userOffset);
-		$ret = date('Y-m-d\TH:i:s\Z', $date);
-		return $this->output($ret);
-	}
-
-	/**
-	 * Formats date for RSS feeds
-	 *
-	 * @param string $dateString Datetime string or Unix timestamp
-	 * @param int $userOffset User's offset from GMT (in hours)
-	 * @return string Formatted date string
-	 */
-	public function toRSS($dateString, $userOffset = null) {
-		$date = $this->fromString($dateString, $userOffset);
-		$ret = date("r", $date);
-		return $this->output($ret);
-	}
-
-	/**
-	 * Returns either a relative date or a formatted date depending
-	 * on the difference between the current time and given datetime.
-	 * $datetime should be in a <i>strtotime</i> - parsable format, like MySQL's datetime datatype.
-	 *
-	 * Options:
-	 *
-	 * - 'format' => a fall back format if the relative time is longer than the duration specified by end
-	 * - 'end' => The end of relative time telling
-	 * - 'userOffset' => Users offset from GMT (in hours)
-	 *
-	 * Relative dates look something like this:
-	 *	3 weeks, 4 days ago
-	 *	15 seconds ago
-	 *
-	 * Default date formatting is d/m/yy e.g: on 18/2/09
-	 *
-	 * The returned string includes 'ago' or 'on' and assumes you'll properly add a word
-	 * like 'Posted ' before the function output.
-	 *
-	 * @param string $dateString Datetime string or Unix timestamp
-	 * @param array $options Default format if timestamp is used in $dateString
-	 * @return string Relative time string.
-	 */
-	public function timeInWords($date, array $options = array()) {
+	
+	private function _words($date, array $options = array()) {
 		$defaults = array(
 			'offset' => 0, 'format' => 'j/n/y', 'end' => '+1 month', 'now' => date('Y-m-d H:i:s')
 		);
 		$options += $defaults;
-
 		$now = $options['now'];
-		$now = new DateTime(is_int($now) ? date('Y-m-d H:i:s', $now) : $now);
 
 		$date = $date ?: date('Y-m-d H:i:s');
 		$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
-		$keys = $this->diff($date, compact('now') + $options);
+		$now = new DateTime(is_int($now) ? date('Y-m-d H:i:s', $now) : $now);
+		if ($date == $now) return 'Now!';
+
+		if ($offset = $options['offset']) {
+			$date->add(DateInterval::createFromDateString("{$offset} hours"));
+		}
 
 		if ($end = $options['end']) {
 			$end = new DateTime(($date > $now ? '+' : '-') . $end);
@@ -358,6 +209,15 @@ class Time extends \al13_helpers\extensions\Helper {
 			if ($outOfBounds) {
 				return 'on ' . $date->format($options['format']);
 			}
+		}
+
+		$diff = $date->diff($now);
+		$keys = (array) $diff + array('w' => 0);
+		$result = '';
+
+		if ($keys['d'] >= 7) {
+			$keys['w'] = floor($keys['d'] / 7);
+			$keys['d'] -= ($keys['w'] * 7);
 		}
 
 		$strings = array(
@@ -369,106 +229,17 @@ class Time extends \al13_helpers\extensions\Helper {
 			'i' => array('minute', 'minutes'),
 			's' => array('second', 'seconds')
 		);
-		$result = array();
 
 		foreach ($strings as $key => $text) {
 			if (!$value = $keys[$key]) {
 				continue;
 			}
-			$result[] = $value . ' ' . $text[($value == 1) ? 0 : 1];
+			list($singular, $plural) = $text;
+			$title = ($value == 1) ? $singular : $plural;
+			$result .= ", {$value} {$title}";
 		}
-		return join(', ', $result) . ($date < $now ? ' ago' : '');
-	}
-
-	public function diff($date, array $options = array()) {
-		$defaults = array('now' => date('Y-m-d'), 'offset' => 0, 'weeks' => true);
-		$options += $defaults;
-
-		$date = is_object($date) ? $date : new DateTime($date);
-		$now = is_object($options['now']) ? $options['now'] : new DateTime($options['now']);
-
-		if ($offset = $options['offset']) {
-			$date->add(DateInterval::createFromDateString("{$offset} hours"));
-		}
-
-		$diff = $date->diff($now);
-		$keys = (array) $diff + array('w' => 0);
-
-		if ($keys['d'] >= 7 && $options['weeks']) {
-			$keys['w'] = floor($keys['d'] / 7);
-			$keys['d'] -= ($keys['w'] * 7);
-		}
-		return $keys;
-	}
-
-	/**
-	 * Alias for timeInWords
-	 *
-	 * @param mixed $dateTime Datetime string (strtotime-compatible) or Unix timestamp
-	 * @param mixed $options Default format string, if timestamp is used in $dateTime, or an array
-	 *              of options to be passed on to `timeInWords()`.
-	 * @return string Relative time string.
-	 * @see Time::timeInWords
-	 */
-	public function relativeTime($dateTime, $options = array()) {
-		return $this->timeInWords($dateTime, $options);
-	}
-
-	/**
-	 * Returns true if specified datetime was within the interval specified, else false.
-	 *
-	 * @param mixed $timeInterval the numeric value with space then time type. Example of valid
-	 *              types: 6 hours, 2 days, 1 minute.
-	 * @param mixed $dateString the datestring or unix timestamp to compare
-	 * @param int $userOffset User's offset from GMT (in hours)
-	 * @return bool
-	 */
-	public function wasWithinLast($timeInterval, $dateString, $userOffset = null) {
-		$tmp = str_replace(' ', '', $timeInterval);
-
-		if (is_numeric($tmp)) {
-			$timeInterval = "{$tmp} days";
-		}
-
-		$date = $this->fromString($dateString, $userOffset);
-		$interval = $this->fromString('-' . $timeInterval);
-		return ($date >= $interval && $date <= time());
-	}
-
-	/**
-	 * Returns GMT, given either a UNIX timestamp or a valid `strtotime()` date string.
-	 *
-	 * @param string $dateString Datetime string
-	 * @return string Formatted date string
-	 */
-	public function gmt($string = null) {
-		$string = $this->fromString($string ?: time());
-		$hour = intval(date("G", $string));
-		$minute = intval(date("i", $string));
-		$second = intval(date("s", $string));
-		$month = intval(date("n", $string));
-		$day = intval(date("j", $string));
-		$year = intval(date("Y", $string));
-		return gmmktime($hour, $minute, $second, $month, $day, $year);
-	}
-
-	/**
-	 * Returns a formatted date string, given either a UNIX timestamp or a valid `strtotime()` date
-	 * string.
-	 *
-	 * @param string $format date format string. defaults to 'd-m-Y'
-	 * @param string $dateString Datetime string
-	 * @param boolean $invalid flag to ignore results of fromString == false
-	 * @param int $userOffset User's offset from GMT (in hours)
-	 * @return string Formatted date string
-	 */
-	public function format($format = 'd-m-Y', $date, $invalid = false, $userOffset = null) {
-		$date = $this->fromString($date, $userOffset);
-
-		if ($date === false && $invalid !== false) {
-			return $invalid;
-		}
-		return date($format, $date);
+		$result .= ($diff->format('%R') == '+') ? ' ago' : '';	
+		return substr($result, 2);
 	}
 }
 
