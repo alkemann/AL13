@@ -39,6 +39,8 @@ class Time extends \al13_helpers\extensions\Helper {
 				return $date->format('L');				
 			default:
 				return $this->_relativeCheck($question, $date, $options);
+				return $this->_relativeCheck($question, $date, $options);
+			break;
 		}
 	}
 
