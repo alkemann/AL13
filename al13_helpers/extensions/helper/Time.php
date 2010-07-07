@@ -72,19 +72,16 @@ class Time extends \al13_helpers\extensions\Helper {
 	/**
 	 * Returns a nicely formatted date string for given Datetime string.
 	 *
-	 * @param string $dateString Datetime string or Unix timestamp
+	 * @param mixed $date Datetime string or Unix timestamp
 	 * @param int $userOffset User's offset from GMT (in hours)
 	 * @return string Formatted date string
 	 */
-	public function nice($dateString = null, $userOffset = 0) {
-		if ($dateString != null) {
-			$dateString = is_int($dateString) ? date("Y-m-d H:i:s") : $dateString;
-			$date = new DateTime((String) $dateString);
-		} else {
-			$date = new DateTime();
-		}
+	public function nice($date = null, $userOffset = 0) {
+		$date = $date ?: date('Y-m-d H:i:s');
+		$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
+
 		if ($userOffset) {
-			date_add($date, date_interval_create_from_date_string($userOffset.' hours'));
+			$date->add(DateInterval::createFromDateString("{$userOffset} hours"));
 		}
 		return $date->format('D, M jS Y, H:i');
 	}
