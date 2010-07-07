@@ -338,194 +338,61 @@ class Time extends \al13_helpers\extensions\Helper {
 	 * @param array $options Default format if timestamp is used in $dateString
 	 * @return string Relative time string.
 	 */
-	public function timeAgoInWords($dateTime, $options = array()) {
-		$userOffset = null;
+	public function timeInWords($date, $options = array()) {
+		if (!is_array($options)) $options = array('format' => $options);
+		$defaults = array('offset' => 0, 'format' => 'd/n/y', 'end' => '-1 year');		
+		$options = array_merge($defaults, $options);		
+		extract($options);
+		
+		$date = $date ?: date('Y-m-d H:i:s');
+		$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
 
-		if (is_array($options) && isset($options['userOffset'])) {
-			$userOffset = $options['userOffset'];
+		if ($offset) {
+			$date->add(DateInterval::createFromDateString("{$userOffset} hours"));
 		}
-		$now = time();
 
-		if (!is_null($userOffset)) {
-			$now = 	$this->convert(time(), $userOffset);
-		}
-		$inSeconds = $this->fromString($dateTime, $userOffset);
-		$backwards = ($inSeconds > $now);
-
-		$format = 'j/n/y';
-		$end = '+1 month';
-
-		if (is_array($options)) {
-			if (isset($options['format'])) {
-				$format = $options['format'];
-				unset($options['format']);
+		if ($end) {
+			if (substr($end,0,1) != '-') $end = '-'.$end;
+			$end = new DateTime(date(DateTime::ATOM, strtotime($end)));
+			$diff = $date->diff($end);
+			if ($diff->format('%R') == '+') {
+				return 'on ' . $date->format($format);
 			}
-			if (isset($options['end'])) {
-				$end = $options['end'];
-				unset($options['end']);
-			}
+		}		
+		
+		$diff = $date->diff(new DateTime());
+		
+		$ret = '';
+		if ($diff->y) $ret .= ($diff->y == 1) ? ', 1 year' 	: ', '.$diff->y.' years';
+		if ($diff->m) $ret .= ($diff->m == 1) ? ', 1 month' 	: ', '.$diff->m.' months';
+		$days = $diff->d;
+		if ($days > 7) {
+			$weeks = floor($days / 7);
+			$days = $days - ($weeks * 7);
+			$ret .= ($weeks == 1) ? ', 1 week' : ', '.$weeks.' weeks';
+			if ($days) $ret .= ($days == 1) ? ', 1 day' : ', '.$days.' days';
 		} else {
-			$format = $options;
-		}
-
-		if ($backwards) {
-			$futureTime = $inSeconds;
-			$pastTime = $now;
-		} else {
-			$futureTime = $now;
-			$pastTime = $inSeconds;
-		}
-		$diff = $futureTime - $pastTime;
-
-		// If more than a week, then take into account the length of months
-		if ($diff >= 604800) {
-			$current = array();
-			$date = array();
-
-			list(
-				$future['H'],
-				$future['i'],
-				$future['s'],
-				$future['d'],
-				$future['m'],
-				$future['Y']
-			) = explode('/', date('H/i/s/d/m/Y', $futureTime));
-
-			list(
-				$past['H'],
-				$past['i'],
-				$past['s'],
-				$past['d'],
-				$past['m'],
-				$past['Y']
-			) = explode('/', date('H/i/s/d/m/Y', $pastTime));
-
-			$years = $months = $weeks = $days = $hours = $minutes = $seconds = 0;
-
-			if ($future['Y'] == $past['Y'] && $future['m'] == $past['m']) {
-				$months = 0;
-				$years = 0;
-			} else {
-				if ($future['Y'] == $past['Y']) {
-					$months = $future['m'] - $past['m'];
-				} else {
-					$years = $future['Y'] - $past['Y'];
-					$months = $future['m'] + ((12 * $years) - $past['m']);
-
-					if ($months >= 12) {
-						$years = floor($months / 12);
-						$months = $months - ($years * 12);
-					}
-
-					if ($future['m'] < $past['m'] && $future['Y'] - $past['Y'] == 1) {
-						$years --;
-					}
-				}
-			}
-
-			if ($future['d'] >= $past['d']) {
-				$days = $future['d'] - $past['d'];
-			} else {
-				$daysInPastMonth = date('t', $pastTime);
-				$daysInFutureMonth = date('t', mktime(0, 0, 0, $future['m'] - 1, 1, $future['Y']));
-
-				if (!$backwards) {
-					$days = ($daysInPastMonth - $past['d']) + $future['d'];
-				} else {
-					$days = ($daysInFutureMonth - $past['d']) + $future['d'];
-				}
-
-				if ($future['m'] != $past['m']) {
-					$months --;
-				}
-			}
-
-			if ($months == 0 && $years >= 1 && $diff < ($years * 31536000)) {
-				$months = 11;
-				$years --;
-			}
-
-			if ($months >= 12) {
-				$years = $years + 1;
-				$months = $months - 12;
-			}
-
-			if ($days >= 7) {
-				$weeks = floor($days / 7);
-				$days = $days - ($weeks * 7);
-			}
-		} else {
-			$years = $months = $weeks = 0;
-			$days = floor($diff / 86400);
-
-			$diff = $diff - ($days * 86400);
-
-			$hours = floor($diff / 3600);
-			$diff = $diff - ($hours * 3600);
-
-			$minutes = floor($diff / 60);
-			$diff = $diff - ($minutes * 60);
-			$seconds = $diff;
-		}
-		$relativeDate = '';
-		$diff = $futureTime - $pastTime;
-
-		$n = function($singular, $plural, $count) {
-			return ($count == 1) ? $singular : $plural;
-		};
-
-		if ($diff > abs($now - $this->fromString($end))) {
-			$relativeDate = sprintf('on %s', date($format, $inSeconds));
-		} else {
-			if ($years > 0) {
-				// years and months and days
-				$relativeDate .= ($relativeDate ? ', ' : '') . $years . ' ' . $n('year', 'years', $years, true);
-				$relativeDate .= $months > 0 ? ($relativeDate ? ', ' : '') . $months . ' ' . $n('month', 'months', $months, true) : '';
-				$relativeDate .= $weeks > 0 ? ($relativeDate ? ', ' : '') . $weeks . ' ' . $n('week', 'weeks', $weeks, true) : '';
-				$relativeDate .= $days > 0 ? ($relativeDate ? ', ' : '') . $days . ' ' . $n('day', 'days', $days, true) : '';
-			} elseif (abs($months) > 0) {
-				// months, weeks and days
-				$relativeDate .= ($relativeDate ? ', ' : '') . $months . ' ' . $n('month', 'months', $months, true);
-				$relativeDate .= $weeks > 0 ? ($relativeDate ? ', ' : '') . $weeks . ' ' . $n('week', 'weeks', $weeks, true) : '';
-				$relativeDate .= $days > 0 ? ($relativeDate ? ', ' : '') . $days . ' ' . $n('day', 'days', $days, true) : '';
-			} elseif (abs($weeks) > 0) {
-				// weeks and days
-				$relativeDate .= ($relativeDate ? ', ' : '') . $weeks . ' ' . $n('week', 'weeks', $weeks, true);
-				$relativeDate .= $days > 0 ? ($relativeDate ? ', ' : '') . $days . ' ' . $n('day', 'days', $days, true) : '';
-			} elseif (abs($days) > 0) {
-				// days and hours
-				$relativeDate .= ($relativeDate ? ', ' : '') . $days . ' ' . $n('day', 'days', $days, true);
-				$relativeDate .= $hours > 0 ? ($relativeDate ? ', ' : '') . $hours . ' ' . $n('hour', 'hours', $hours, true) : '';
-			} elseif (abs($hours) > 0) {
-				// hours and minutes
-				$relativeDate .= ($relativeDate ? ', ' : '') . $hours . ' ' . $n('hour', 'hours', $hours, true);
-				$relativeDate .= $minutes > 0 ? ($relativeDate ? ', ' : '') . $minutes . ' ' . $n('minute', 'minutes', $minutes, true) : '';
-			} elseif (abs($minutes) > 0) {
-				// minutes only
-				$relativeDate .= ($relativeDate ? ', ' : '') . $minutes . ' ' . $n('minute', 'minutes', $minutes, true);
-			} else {
-				// seconds only
-				$relativeDate .= ($relativeDate ? ', ' : '') . $seconds . ' ' . $n('second', 'seconds', $seconds, true);
-			}
-
-			if (!$backwards) {
-				$relativeDate = sprintf('%s ago', $relativeDate);
-			}
-		}
-		return $this->output($relativeDate);
+			if ($diff->d) $ret .= ($diff->d == 1) ? ', 1 day' : ', '.$diff->d.' days';
+		}		
+		if ($diff->h) $ret .= ($diff->h == 1) ? ', 1 hour' 	: ', '.$diff->h.' hours';
+		if ($diff->i) $ret .= ($diff->i == 1) ? ', 1 minute' 	: ', '.$diff->i.' minutes';
+		if ($diff->s) $ret .= ($diff->s == 1) ? ', 1 second' 	: ', '.$diff->s.' seconds';
+		$ret .= ($diff->format('%R') == '+') ? ' ago' : '';	
+		$ret = substr($ret,2);	
+		return $ret;
 	}
 
 	/**
-	 * Alias for timeAgoInWords
+	 * Alias for timeInWords
 	 *
 	 * @param mixed $dateTime Datetime string (strtotime-compatible) or Unix timestamp
 	 * @param mixed $options Default format string, if timestamp is used in $dateTime, or an array
-	 *              of options to be passed on to `timeAgoInWords()`.
+	 *              of options to be passed on to `timeInWords()`.
 	 * @return string Relative time string.
-	 * @see Time::timeAgoInWords
+	 * @see Time::timeInWords
 	 */
 	public function relativeTime($dateTime, $options = array()) {
-		return $this->timeAgoInWords($dateTime, $options);
+		return $this->timeInWords($dateTime, $options);
 	}
 
 	/**
