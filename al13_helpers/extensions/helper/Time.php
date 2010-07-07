@@ -17,6 +17,29 @@ use DateInterval;
  * Time Helper class for easy use of time data.
  *
  * Manipulation of time data.
+ *
+ * ##Convert examples:
+ * {{{
+ * echo $post->title .' created ' . $this->time->to('words', $post->created); 
+ * // outputs: My first post created 1 week, 2 days ago
+ * 
+ * echo $this->time->to('nice', $post->modified);
+ * // outputs: Fri, Dec 24th 2010, 10:34
+ * 
+ * echo $this->time->to('short', $comment->created);
+ * // ouputs: Yesterday, 18:34
+ * }}}
+ * See docblock for complete list of types and options
+ * 
+ * ##Query examples:
+ * {{{
+ * // these return boolean
+ * $this->time->is('today', $post->created);
+ * $this->time->is('this week', $post->created);
+ * $this->time->is('leap year', $time);
+ * }}}
+ * See docblock for complete list of types and options
+ *
  */
 class Time extends \al13_helpers\extensions\Helper {
 
@@ -38,7 +61,7 @@ class Time extends \al13_helpers\extensions\Helper {
 	 * @param string $question
 	 * @param mixed $date string|int|null
 	 * @param array $options
-	 * return boolean
+	 * @return boolean
 	 */
 	public function is($question, $date = null, array $options = array()) {	
 		switch ($question) {
@@ -66,7 +89,7 @@ class Time extends \al13_helpers\extensions\Helper {
 	 * @param string $type
 	 * @param mixed $date string|int|null
 	 * @param array $options
-	 * return string 
+	 * @return string 
 	 */
 	public function to($type, $date = null, array $options = array()) {
 		$defaults = array('format' => 'j/n/y');
@@ -147,6 +170,13 @@ class Time extends \al13_helpers\extensions\Helper {
 		return null;
 	}
 	
+	/**
+	 * Format date to 'D, M jS Y, H:i'
+	 *
+	 * @param mixed $date
+	 * @param int $offset hours
+	 * @return string
+	 */
 	private function _nice($date, $offset = 0) {
 		$date = $date ?: date('Y-m-d H:i:s');
 		$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
@@ -157,6 +187,13 @@ class Time extends \al13_helpers\extensions\Helper {
 		return $date->format('D, M jS Y, H:i');
 	}
 		
+	/**
+	 * Format date to "M jS y, H:i", or 'Today, H:i' or similar
+	 *
+	 * @param mixed $date
+	 * @param int $offset hours
+	 * @return string
+	 */
 	private function _short($date = null, $offset = 0) {
 		$now = new DateTime();
 		$date = $date ?: date('Y-m-d H:i:s');
@@ -192,6 +229,13 @@ class Time extends \al13_helpers\extensions\Helper {
 		return ($text) ? sprintf($text, $ret) : $ret;
 	}
 	
+	/**
+	 * Convert date to relative worded string like "1 week, 2 days ago"
+	 *
+	 * @param mixed $date
+	 * @param array $options
+	 * @return string
+	 */
 	protected function _words($date, array $options = array()) {
 		$defaults = array(
 			'offset' => 0, 'format' => 'j/n/y', 'end' => '+1 month', 'now' => date('Y-m-d H:i:s')
@@ -234,7 +278,14 @@ class Time extends \al13_helpers\extensions\Helper {
 		return join(', ', $result) . ($date < $now ? ' ago' : '');
 	}
 
-	public function diff($date, array $options = array()) {
+	/**
+	 * Calculate the different between date and now
+	 *
+	 * @param mixed $date
+	 * @param array $options
+	 * @return array
+	 */
+	private function _diff($date, array $options = array()) {
 		$defaults = array('now' => date('Y-m-d'), 'offset' => 0, 'weeks' => true);
 		$options += $defaults;
 
