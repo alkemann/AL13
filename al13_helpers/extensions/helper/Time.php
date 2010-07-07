@@ -9,8 +9,9 @@
 
 namespace al13_helpers\extensions\helper;
 
-use \DateTime;
-use \DateInterval;
+use Exception;
+use DateTime;
+use DateInterval;
 
 /**
  * Time Helper class for easy use of time data.
@@ -36,10 +37,8 @@ class Time extends \al13_helpers\extensions\Helper {
 				$date = $date ?: date('Y-m-d H:i:s');
 				$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
 				return $date->format('L');				
-			break;
-			default :
+			default:
 				return $this->_relativeCheck($question, $date, $options);
-			break;
 		}
 	}
 
@@ -52,47 +51,40 @@ class Time extends \al13_helpers\extensions\Helper {
 	 * return string 
 	 */
 	public function to($type, $date = null, array $options = array()) {
-		switch ($type) {
-			case 'format' : 
-				if (!isset($options['format'])) return null;
+		$defaults = array('format' => 'j/n/y');
+		$options += $defaults;
+
+		switch (strtolower($type)) {
+			case 'format':
 				return $this->format($options['format'], $date);
-			break;
 			case 'nice':
 				$offset = (isset($options['offset'])) ? $options['offset'] : 0;
 				return $this->_nice($date, $offset);
-			break;
-			case 'niceShort' : 
-			case 'short' :
+			case 'niceshort':
+			case 'short':
 				$offset = (isset($options['offset'])) ? $options['offset'] : 0;
 				return $this->_short($date, $offset);
-			break;
 			case 'unix' : case 'Unix' : case 'UNIX' :
 				if ($date == null) return time();
 				$date = $date ?: date('Y-m-d H:i:s');
 				$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
 				return $date->format('U');
-			break;
-			case 'rss' : case 'Rss' : case 'RSS' :
+			case 'rss':
 				$date = $date ?: date('Y-m-d H:i:s');
 				$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
 				return $date->format(DateTime::RSS);
-			break;
-			case 'atom' : case 'Atom' : case 'ATOM' :
+			case 'atom':
 				$date = $date ?: date('Y-m-d H:i:s');
 				$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
 				return $date->format(DateTime::ATOM);
-			break;
-			case 'cookie' : case 'Cookie' : case 'COOKIE' :
+			case 'cookie':
 				$date = $date ?: date('Y-m-d H:i:s');
 				$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
 				return $date->format(DateTime::COOKIE);
-			break;
-			case 'words' : 
-			case 'timeAgoInWords' : 
-			case 'relative' :
+			case 'words':
+			case 'relative':
 			default:
 				return $this->_words($date, $options);
-			break;
 		}	
 	}
 		
@@ -115,29 +107,24 @@ class Time extends \al13_helpers\extensions\Helper {
 		$date = $date ?: date('Y-m-d H:i:s');
 		$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
 		$now = new DateTime(is_int($now) ? date('Y-m-d H:i:s', $now) : $now);
+
 		switch ($question) {
 			case 'today' :
 				return $date->format('dmy') == $now->format('dmy');
-			break;
 			case 'tomorrow' :	
 				$now->add(DateInterval::createFromDateString('1 day'));
 				return $date->format('dmy') == $now->format('dmy');
-			break;
 			case 'yesterday' :	
 				$now->add(DateInterval::createFromDateString('-1 day'));
 				return $date->format('dmy') == $now->format('dmy');
-			break;
 			case 'this week' :
 				return $date->format('Wy') == $now->format('Wy');
-			break;
 			case 'this month' :
 				return $date->format('my') == $now->format('my');
-			break;
 			case 'this year' :
 				return $date->format('y') == $now->format('y');
-			break;
 		}	
-		throw new \Exception('Illegal $question parameter');
+		throw new Exception('Illegal $question parameter');
 		return null;
 	}
 	
@@ -163,6 +150,7 @@ class Time extends \al13_helpers\extensions\Helper {
 		$y = ($diff->format('%y') != 0) ? ' Y' : '';
 		$onlyDay = ($diff->format('%y%m') == '00');
 		$dayDirection = $diff->format('%R');
+
 		switch (true) {
 			case ($diff->d == 0 && $onlyDay) :
 				$text = 'Today, %s';
@@ -178,29 +166,25 @@ class Time extends \al13_helpers\extensions\Helper {
 			break;
 			default : 
 				$text = null;
-				$format = "M jS$y, H:i";
+				$format = "M jS{$y}, H:i";
 		}
 		$ret = $date->format($format);
-		if ($text) 
-			$ret = sprintf($text, $ret);
-		return $ret;
+
+		return ($text) ? sprintf($text, $ret) : $ret;
 	}
 	
-	private function _words($date, array $options = array()) {
+	protected function _words($date, array $options = array()) {
 		$defaults = array(
 			'offset' => 0, 'format' => 'j/n/y', 'end' => '+1 month', 'now' => date('Y-m-d H:i:s')
 		);
 		$options += $defaults;
+
 		$now = $options['now'];
+		$now = new DateTime(is_int($now) ? date('Y-m-d H:i:s', $now) : $now);
 
 		$date = $date ?: date('Y-m-d H:i:s');
 		$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
-		$now = new DateTime(is_int($now) ? date('Y-m-d H:i:s', $now) : $now);
-		if ($date == $now) return 'Now!';
-
-		if ($offset = $options['offset']) {
-			$date->add(DateInterval::createFromDateString("{$offset} hours"));
-		}
+		$keys = $this->diff($date, compact('now') + $options);
 
 		if ($end = $options['end']) {
 			$end = new DateTime(($date > $now ? '+' : '-') . $end);
@@ -209,15 +193,6 @@ class Time extends \al13_helpers\extensions\Helper {
 			if ($outOfBounds) {
 				return 'on ' . $date->format($options['format']);
 			}
-		}
-
-		$diff = $date->diff($now);
-		$keys = (array) $diff + array('w' => 0);
-		$result = '';
-
-		if ($keys['d'] >= 7) {
-			$keys['w'] = floor($keys['d'] / 7);
-			$keys['d'] -= ($keys['w'] * 7);
 		}
 
 		$strings = array(
@@ -229,17 +204,36 @@ class Time extends \al13_helpers\extensions\Helper {
 			'i' => array('minute', 'minutes'),
 			's' => array('second', 'seconds')
 		);
+		$result = array();
 
 		foreach ($strings as $key => $text) {
 			if (!$value = $keys[$key]) {
 				continue;
 			}
-			list($singular, $plural) = $text;
-			$title = ($value == 1) ? $singular : $plural;
-			$result .= ", {$value} {$title}";
+			$result[] = $value . ' ' . $text[($value == 1) ? 0 : 1];
 		}
-		$result .= ($diff->format('%R') == '+') ? ' ago' : '';	
-		return substr($result, 2);
+		return join(', ', $result) . ($date < $now ? ' ago' : '');
+	}
+
+	public function diff($date, array $options = array()) {
+		$defaults = array('now' => date('Y-m-d'), 'offset' => 0, 'weeks' => true);
+		$options += $defaults;
+
+		$date = is_object($date) ? $date : new DateTime($date);
+		$now = is_object($options['now']) ? $options['now'] : new DateTime($options['now']);
+
+		if ($offset = $options['offset']) {
+			$date->add(DateInterval::createFromDateString("{$offset} hours"));
+		}
+
+		$diff = $date->diff($now);
+		$keys = (array) $diff + array('w' => 0);
+
+		if ($keys['d'] >= 7 && $options['weeks']) {
+			$keys['w'] = floor($keys['d'] / 7);
+			$keys['d'] -= ($keys['w'] * 7);
+		}
+		return $keys;
 	}
 }
 
