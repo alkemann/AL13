@@ -343,15 +343,13 @@ class Time extends \al13_helpers\extensions\Helper {
 			'offset' => 0, 'format' => 'j/n/y', 'end' => '+1 month', 'now' => date('Y-m-d H:i:s')
 		);
 		$options += $defaults;
+
 		$now = $options['now'];
+		$now = new DateTime(is_int($now) ? date('Y-m-d H:i:s', $now) : $now);
 
 		$date = $date ?: date('Y-m-d H:i:s');
 		$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
-		$now = new DateTime(is_int($now) ? date('Y-m-d H:i:s', $now) : $now);
-
-		if ($offset = $options['offset']) {
-			$date->add(DateInterval::createFromDateString("{$offset} hours"));
-		}
+		$keys = $this->diff($date, compact('now') + $options);
 
 		if ($end = $options['end']) {
 			$end = new DateTime(($date > $now ? '+' : '-') . $end);
@@ -360,15 +358,6 @@ class Time extends \al13_helpers\extensions\Helper {
 			if ($outOfBounds) {
 				return 'on ' . $date->format($options['format']);
 			}
-		}
-
-		$diff = $date->diff($now);
-		$keys = (array) $diff + array('w' => 0);
-		$result = '';
-
-		if ($keys['d'] >= 7) {
-			$keys['w'] = floor($keys['d'] / 7);
-			$keys['d'] -= ($keys['w'] * 7);
 		}
 
 		$strings = array(
@@ -380,17 +369,36 @@ class Time extends \al13_helpers\extensions\Helper {
 			'i' => array('minute', 'minutes'),
 			's' => array('second', 'seconds')
 		);
+		$result = array();
 
 		foreach ($strings as $key => $text) {
 			if (!$value = $keys[$key]) {
 				continue;
 			}
-			list($singular, $plural) = $text;
-			$title = ($value == 1) ? $singular : $plural;
-			$result .= ", {$value} {$title}";
+			$result[] = $value . ' ' . $text[($value == 1) ? 0 : 1];
 		}
-		$result .= ($diff->format('%R') == '+') ? ' ago' : '';	
-		return substr($result, 2);
+		return join(', ', $result) . ($date < $now ? ' ago' : '');
+	}
+
+	public function diff($date, array $options = array()) {
+		$defaults = array('now' => date('Y-m-d'), 'offset' => 0, 'weeks' => true);
+		$options += $defaults;
+
+		$date = is_object($date) ? $date : new DateTime($date);
+		$now = is_object($options['now']) ? $options['now'] : new DateTime($options['now']);
+
+		if ($offset = $options['offset']) {
+			$date->add(DateInterval::createFromDateString("{$offset} hours"));
+		}
+
+		$diff = $date->diff($now);
+		$keys = (array) $diff + array('w' => 0);
+
+		if ($keys['d'] >= 7 && $options['weeks']) {
+			$keys['w'] = floor($keys['d'] / 7);
+			$keys['d'] -= ($keys['w'] * 7);
+		}
+		return $keys;
 	}
 
 	/**
