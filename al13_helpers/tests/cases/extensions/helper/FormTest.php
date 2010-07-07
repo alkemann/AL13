@@ -9,7 +9,7 @@
 
 namespace al13_helpers\tests\cases\extensions\helper;
 
-use \lithium\data\Model\Record;
+use \lithium\data\entity\Record;
 use \al13_helpers\extensions\helper\Form;
 use \lithium\tests\mocks\template\helper\MockFormRenderer;
 
