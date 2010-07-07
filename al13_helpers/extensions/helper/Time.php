@@ -338,48 +338,59 @@ class Time extends \al13_helpers\extensions\Helper {
 	 * @param array $options Default format if timestamp is used in $dateString
 	 * @return string Relative time string.
 	 */
-	public function timeInWords($date, $options = array()) {
-		if (!is_array($options)) $options = array('format' => $options);
-		$defaults = array('offset' => 0, 'format' => 'd/n/y', 'end' => '-1 year');		
-		$options = array_merge($defaults, $options);		
-		extract($options);
-		
+	public function timeInWords($date, array $options = array()) {
+		$defaults = array(
+			'offset' => 0, 'format' => 'j/n/y', 'end' => '+1 month', 'now' => date('Y-m-d H:i:s')
+		);
+		$options += $defaults;
+		$now = $options['now'];
+
 		$date = $date ?: date('Y-m-d H:i:s');
 		$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
+		$now = new DateTime(is_int($now) ? date('Y-m-d H:i:s', $now) : $now);
 
-		if ($offset) {
-			$date->add(DateInterval::createFromDateString("{$userOffset} hours"));
+		if ($offset = $options['offset']) {
+			$date->add(DateInterval::createFromDateString("{$offset} hours"));
 		}
 
-		if ($end) {
-			if (substr($end,0,1) != '-') $end = '-'.$end;
-			$end = new DateTime(date(DateTime::ATOM, strtotime($end)));
-			$diff = $date->diff($end);
-			if ($diff->format('%R') == '+') {
-				return 'on ' . $date->format($format);
+		if ($end = $options['end']) {
+			$end = new DateTime(($date > $now ? '+' : '-') . $end);
+			$outOfBounds = (($date > $now && $date > $end) || ($date < $now && $date < $end));
+
+			if ($outOfBounds) {
+				return 'on ' . $date->format($options['format']);
 			}
-		}		
-		
-		$diff = $date->diff(new DateTime());
-		
-		$ret = '';
-		if ($diff->y) $ret .= ($diff->y == 1) ? ', 1 year' 	: ', '.$diff->y.' years';
-		if ($diff->m) $ret .= ($diff->m == 1) ? ', 1 month' 	: ', '.$diff->m.' months';
-		$days = $diff->d;
-		if ($days > 7) {
-			$weeks = floor($days / 7);
-			$days = $days - ($weeks * 7);
-			$ret .= ($weeks == 1) ? ', 1 week' : ', '.$weeks.' weeks';
-			if ($days) $ret .= ($days == 1) ? ', 1 day' : ', '.$days.' days';
-		} else {
-			if ($diff->d) $ret .= ($diff->d == 1) ? ', 1 day' : ', '.$diff->d.' days';
-		}		
-		if ($diff->h) $ret .= ($diff->h == 1) ? ', 1 hour' 	: ', '.$diff->h.' hours';
-		if ($diff->i) $ret .= ($diff->i == 1) ? ', 1 minute' 	: ', '.$diff->i.' minutes';
-		if ($diff->s) $ret .= ($diff->s == 1) ? ', 1 second' 	: ', '.$diff->s.' seconds';
-		$ret .= ($diff->format('%R') == '+') ? ' ago' : '';	
-		$ret = substr($ret,2);	
-		return $ret;
+		}
+
+		$diff = $date->diff($now);
+		$keys = (array) $diff + array('w' => 0);
+		$result = '';
+
+		if ($keys['d'] >= 7) {
+			$keys['w'] = floor($keys['d'] / 7);
+			$keys['d'] -= ($keys['w'] * 7);
+		}
+
+		$strings = array(
+			'y' => array('year', 'years'),
+			'm' => array('month', 'months'),
+			'w' => array('week', 'weeks'),
+			'd' => array('day', 'days'),
+			'h' => array('hour', 'hours'),
+			'i' => array('minute', 'minutes'),
+			's' => array('second', 'seconds')
+		);
+
+		foreach ($strings as $key => $text) {
+			if (!$value = $keys[$key]) {
+				continue;
+			}
+			list($singular, $plural) = $text;
+			$title = ($value == 1) ? $singular : $plural;
+			$result .= ", {$value} {$title}";
+		}
+		$result .= ($diff->format('%R') == '+') ? ' ago' : '';	
+		return substr($result, 2);
 	}
 
 	/**

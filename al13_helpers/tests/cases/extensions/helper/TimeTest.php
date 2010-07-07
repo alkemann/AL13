@@ -80,18 +80,21 @@ class TimeTest extends \lithium\test\Unit {
 		$result = $this->time->timeInWords('2007-9-25');
 		$this->assertEqual($result, 'on 25/9/07');
 
-		$result = $this->time->timeInWords('2007-9-25', 'Y-m-d');
+		$result = $this->time->timeInWords('2007-9-25', array('format' => 'Y-m-d'));
 		$this->assertEqual($result, 'on 2007-09-25');
 
-		$result = $this->time->timeInWords('2007-9-25', 'Y-m-d', true);
+		$result = $this->time->timeInWords('2007-9-25', array('format' => 'Y-m-d'));
 		$this->assertEqual($result, 'on 2007-09-25');
 
-		$result = $this->time->timeInWords(strtotime('-2 weeks, -2 days'), 'Y-m-d', false);
+		$result = $this->time->timeInWords(strtotime('-2 weeks, -2 days'), array(
+			'format' => 'Y-m-d'
+		));
 		$this->assertEqual($result, '2 weeks, 2 days ago');
 
-		$result = $this->time->timeInWords(strtotime('2 weeks, 2 days'), 'Y-m-d', true);
+		$result = $this->time->timeInWords(strtotime('2 weeks, 2 days'), array(
+			'format' => 'Y-m-d'
+		));
 		$this->assertPattern('/^2 weeks, [1|2] day(s)?$/', $result);
-
 	}
 
 	public function testTimeInWordsOptions() {
@@ -129,38 +132,38 @@ class TimeTest extends \lithium\test\Unit {
 		$this->assertEqual($result, '2 years, 5 months, 2 days ago');
 
 		$result = $this->time->timeInWords(strtotime('2 months, 2 days'), array('end' => '1 month'));
-		$this->assertEqual('on ' . date('d/n/y', strtotime('2 months, 2 days')), $result);
+		$this->assertEqual('on ' . date('j/n/y', strtotime('2 months, 2 days')), $result);
 
-		$result = $this->time->timeInWords(strtotime('2 months, 2 days'), array('end' => '3 month'));
+		$result = $this->time->timeInWords(strtotime('+2 months, 2 days'), array('end' => '3 months'));
 		$this->assertPattern('/2 months/', $result);
 
-		$result = $this->time->timeInWords(strtotime('2 months, 12 days'), array('end' => '3 month'));
+		$result = $this->time->timeInWords(strtotime('2 months, 12 days'), array('end' => '3 months'));
 		$this->assertPattern('/2 months, 1 week/', $result);
 
-		$result = $this->time->timeInWords(strtotime('3 months, 5 days'), array('end' => '4 month'));
+		$result = $this->time->timeInWords(strtotime('3 months, 5 days'), array('end' => '4 months'));
 		$this->assertEqual($result, '3 months, 5 days');
 
-		$result = $this->time->timeInWords(strtotime('-2 months, -2 days'), array('end' => '3 month'));
+		$result = $this->time->timeInWords(strtotime('-2 months, -2 days'), array('end' => '3 months'));
 		$this->assertEqual($result, '2 months, 2 days ago');
 
-		$result = $this->time->timeInWords(strtotime('-2 months, -2 days'), array('end' => '3 month'));
+		$result = $this->time->timeInWords(strtotime('-2 months, -2 days'), array('end' => '3 months'));
 		$this->assertEqual($result, '2 months, 2 days ago');
 
-		$result = $this->time->timeInWords(strtotime('2 months, 2 days'), array('end' => '3 month'));
+		$result = $this->time->timeInWords(strtotime('2 months, 2 days'), array('end' => '3 months'));
 		$this->assertPattern('/2 months/', $result);
 
 		$result = $this->time->timeInWords(strtotime('2 months, 2 days'), array('end' => '1 month', 'format' => 'Y-m-d'));
 		$this->assertEqual($result, 'on ' . date('Y-m-d', strtotime('2 months, 2 days')));
 		
-		$result = $this->time->timeInWords(strtotime('-2 months, -2 days'), array('end' => '1 month', 'format' => 'Y-m-d'));
-		$this->assertEqual('on ' . date('Y-m-d', strtotime('-2 months, -2 days')),$result);
+		$result = $this->time->timeInWords(strtotime('-2 months, -2 days'), array('end' => '-1 month', 'format' => 'Y-m-d'));
+		$this->assertEqual('on ' . date('Y-m-d', strtotime('-2 months, -2 days')), $result);
 
 		$result = $this->time->timeInWords(strtotime('-13 months, -5 days'), array('end' => '2 years'));
 		$this->assertEqual($result, '1 year, 1 month, 5 days ago');
 
-		$fourHours = $this->time->timeInWords(strtotime('-5 days, -2 hours'), array('userOffset' => -4));
-		$result = $this->time->timeInWords(strtotime('-5 days, -2 hours'), array('userOffset' => 4));
-		$this->assertEqual($fourHours, $result);
+		$earlier = $this->time->timeInWords(strtotime('-5 days'), array('offset' => -4));
+		$later = $this->time->timeInWords(strtotime('-5 days, -8 hours'), array('offset' => 4));
+		$this->assertEqual($earlier, $later);
 
 		$result = $this->time->timeInWords(strtotime('-2 hours'));
 		$expected = '2 hours ago';
