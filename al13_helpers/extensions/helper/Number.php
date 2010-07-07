@@ -17,25 +17,25 @@ namespace al13_helpers\extensions\helper;
  * Methods to make numbers more readable.
  */
 class Number extends \al13_helpers\extensions\Helper {
-/**
- * Formats a number with a level of precision.
- *
- * @param  float	$number	A floating point number.
- * @param  integer $precision The precision of the returned number.
- * @return float Enter description here...
- * @static
- */
-	function precision($number, $precision = 3) {
+
+	/**
+	 * Formats a number with a level of precision.
+	 *
+	 * @param  float	$number	A floating point number.
+	 * @param  integer $precision The precision of the returned number.
+	 * @return float Enter description here...
+	 */
+	public function precision($number, $precision = 3) {
 		return sprintf("%01.{$precision}f", $number);
 	}
-/**
- * Returns a formatted-for-humans file size.
- *
- * @param integer $length Size in bytes
- * @return string Human readable size
- * @static
- */
-	function toReadableSize($size) {
+
+	/**
+	 * Returns a formatted-for-humans file size.
+	 *
+	 * @param integer $length Size in bytes
+	 * @return string Human readable size
+	 */
+	public function toReadableSize($size) {
 		switch (true) {
 			case $size == 1:
 				return '1 Byte';
@@ -51,27 +51,27 @@ class Number extends \al13_helpers\extensions\Helper {
 				return sprintf('%.2f TB', $this->precision($size / 1024 / 1024 / 1024 / 1024, 2));
 		}
 	}
-/**
- * Formats a number into a percentage string.
- *
- * @param float $number A floating point number
- * @param integer $precision The precision of the returned number
- * @return string Percentage string
- * @static
- */
-	function toPercentage($number, $precision = 2) {
+
+	/**
+	 * Formats a number into a percentage string.
+	 *
+	 * @param float $number A floating point number
+	 * @param integer $precision The precision of the returned number
+	 * @return string Percentage string
+	 */
+	public function toPercentage($number, $precision = 2) {
 		return $this->precision($number, $precision) . '%';
 	}
-/**
- * Formats a number into a currency format.
- *
- * @param float $number A floating point number
- * @param integer $options if int then places, if string then before, if (,.-) then use it
- *   or array with places and before keys
- * @return string formatted number
- * @static
- */
-	function format($number, $options = false) {
+
+	/**
+	 * Formats a number into a currency format.
+	 *
+	 * @param float $number A floating point number
+	 * @param integer $options if int then places, if string then before, if (,.-) then use it
+	 *   or array with places and before keys
+	 * @return string formatted number
+	 */
+	public function format($number, $options = false) {
 		$places = 0;
 		if (is_int($options)) {
 			$places = $options;
@@ -105,16 +105,17 @@ class Number extends \al13_helpers\extensions\Helper {
 		}
 		return $out;
 	}
-/**
- * Formats a number into a currency format.
- *
- * @param float $number
- * @param string $currency Shortcut to default options. Valid values are 'USD', 'EUR', 'GBP', otherwise
- *   set at least 'before' and 'after' options.
- * @param array $options
- * @return string Number formatted as a currency.
- */
-	function currency($number, $currency = 'USD', $options = array()) {
+
+	/**
+	 * Formats a number into a currency format.
+	 *
+	 * @param float $number
+	 * @param string $currency Shortcut to default options. Valid values are 'USD', 'EUR', 'GBP', otherwise
+	 *               set at least 'before' and 'after' options.
+	 * @param array $options
+	 * @return string Number formatted as a currency.
+	 */
+	public function currency($number, $currency = 'USD', $options = array()) {
 		$default = array(
 			'before'=>'', 'after' => '', 'zero' => '0', 'places' => 2, 'thousands' => ',',
 			'decimals' => '.','negative' => '()', 'escape' => true
@@ -173,4 +174,5 @@ class Number extends \al13_helpers\extensions\Helper {
 		return $result;
 	}
 }
+
 ?>
