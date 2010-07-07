@@ -102,19 +102,40 @@ class Time extends \al13_helpers\extensions\Helper {
 	 * @param int $userOffset User's offset from GMT (in hours)
 	 * @return string Described, relative date string
 	 */
-	public function niceShort($dateString = null, $userOffset = null) {
-		$date = $dateString ? $this->fromString($dateString, $userOffset) : time();
-
-		$y = $this->isThisYear($date) ? '' : ' Y';
-
-		if ($this->isToday($date)) {
-			$ret = sprintf('Today, %s', date("H:i", $date));
-		} elseif ($this->wasYesterday($date)) {
-			$ret = sprintf('Yesterday, %s', date("H:i", $date));
-		} else {
-			$ret = date("M jS{$y}, H:i", $date);
+	public function niceShort($date = null, $userOffset = 0) {
+		$date = $date ?: date('Y-m-d H:i:s');
+		$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
+	
+		if ($userOffset) {
+			$date->add(DateInterval::createFromDateString("{$userOffset} hours"));
 		}
-		return $this->output($ret);
+		
+		$diff = $date->diff(new DateTime());
+		$y = ($diff->format('%y') != 0) ? ' Y' : '';
+
+		$dayDiff = $diff->format('%d');
+		$dayDirection = $diff->format('%R');
+		switch (true) {
+			case ($dayDiff == 0) :
+				$text = 'Today, %s';
+				$format = 'H:i';
+			break;
+			case ($dayDiff == 1 && $dayDirection == '+') :
+				$text = 'Yesterday, %s';
+				$format = 'H:i';
+			break;
+			case ($dayDiff == 1 && $dayDirection == '-') :
+				$text = 'Tomorrow, %s';
+				$format = 'H:i';
+			break;
+			default : 
+				$text = null;
+				$format = "M jS$y, H:i";
+		}
+		$ret = $date->format($format);
+		if ($text) 
+			$ret = sprintf($text, $ret);
+		return $ret;
 	}
 
 	/**
