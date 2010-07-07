@@ -9,6 +9,9 @@
 
 namespace al13_helpers\extensions\helper;
 
+use \DateTime;
+use \DateInterval;
+
 /**
  * Time Helper class for easy use of time data.
  *
@@ -73,15 +76,17 @@ class Time extends \al13_helpers\extensions\Helper {
 	 * @param int $userOffset User's offset from GMT (in hours)
 	 * @return string Formatted date string
 	 */
-	public function nice($dateString = null, $userOffset = null) {
+	public function nice($dateString = null, $userOffset = 0) {
 		if ($dateString != null) {
-			$date = $this->fromString($dateString, $userOffset);
+			$dateString = is_int($dateString) ? date("Y-m-d H:i:s") : $dateString;
+			$date = new DateTime((String) $dateString);
 		} else {
-			$date = time();
+			$date = new DateTime();
 		}
-
-		$ret = date("D, M jS Y, H:i", $date);
-		return $this->output($ret);
+		if ($userOffset) {
+			date_add($date, date_interval_create_from_date_string($userOffset.' hours'));
+		}
+		return $date->format('D, M jS Y, H:i');
 	}
 
 	public function output($str) {

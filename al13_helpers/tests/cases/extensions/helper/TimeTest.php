@@ -297,10 +297,10 @@ class TimeTest extends \lithium\test\Unit {
 	 * @return void
 	 */
 	public function testNice() {
-		$time = time() + 2 * Time::DAY;
+		$time = time() + (2 * Time::DAY);
 		$this->assertEqual(date('D, M jS Y, H:i', $time), $this->time->nice($time));
 
-		$time = time() - 2 * Time::DAY;
+		$time = time() - (2 * Time::DAY);
 		$this->assertEqual(date('D, M jS Y, H:i', $time), $this->time->nice($time));
 
 		$time = time();
@@ -311,6 +311,15 @@ class TimeTest extends \lithium\test\Unit {
 
 		$time = null;
 		$this->assertEqual(date('D, M jS Y, H:i', time()), $this->time->nice($time));
+		
+		$time = date('H:i', time());
+		$expected = 'Fri, Dec 24th 2010, '.$time;
+		$result = $this->time->nice('2010-12-24 '.$time.':00');
+		$this->assertEqual($expected, $result);
+		
+		$expected = 'Sat, Dec 25th 2010, '.$time;
+		$result = $this->time->nice('2010-12-24 '.$time.':00', 24); //offset 24 hours
+		$this->assertEqual($expected, $result);
 	}
 
 	/**
