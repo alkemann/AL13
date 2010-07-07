@@ -37,8 +37,10 @@ class Number extends \al13_helpers\extensions\Helper {
  */
 	function toReadableSize($size) {
 		switch (true) {
+			case $size == 1:
+				return '1 Byte';
 			case $size < 1024:
-				return sprintf('%d Byte', '%d Bytes', $size);
+				return sprintf('%d Bytes', $size);
 			case round($size / 1024) < 1024:
 				return sprintf('%d KB', $this->precision($size / 1024, 0));
 			case round($size / 1024 / 1024, 2) < 1024:
