@@ -292,7 +292,6 @@ class NumberTest extends \lithium\test\Unit {
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->toReadableSize(1);
-		dt($result);
 		$expected = '1 Byte';
 		$this->assertEqual($expected, $result);
 
