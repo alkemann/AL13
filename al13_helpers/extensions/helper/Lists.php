@@ -41,20 +41,20 @@ use lithium\net\http\Router;
  * // We have a list of links stored in the database and on this view we wish to list them out.
  * // $links being a collection of entities with at the properties 'url' and 'title':
  * foreach ($links as $link) {
- * 	$menu->add('link_list', array($link->title, $link->url));
+ * 	$this->lists->add('link_list', array($link->title, $link->url));
  * }
- * echo $menu->generate('link_list');
+ * echo $this->lists->generate('link_list');
  * }}}
  *
  * Usage example 2: _A multilevel list_
  * {{{
  * // Say we have an Article with hasMany Page, to render a list of links to both we could do :
  * foreach ($data as $article) {
- * 	$menu->add('articles', array($article->title, array(
+ * 	$this->lists->add('articles', array($article->title, array(
  * 		'action' =>'view', $article->id
  * 	)));
  * 	foreach ($article->pages as $page) {
- * 		$menu->add(
+ * 		$this->lists->add(
  * 			array('articles', $article->className),
  * 			array($page->title, array(
  * 				'controller'=> 'pages', 'action' => 'view', $page->id
@@ -62,7 +62,7 @@ use lithium\net\http\Router;
  * 		));
  * 	}
  * }
- * echo $menu->generate('articles');
+ * echo $this->lists->generate('articles');
  * }}}
  *
  * This will generate this:
@@ -265,7 +265,7 @@ class Lists extends \al13_helpers\extensions\Helper {
 	 *  @options 'div'	 > string:class || boolean:use || array('id','class','style')
 	 *  @options 'active'> array('tag' => string(span,strong,etc), 'attributes' => array(htmlAttributes), 'strict' => boolean(true|false)))
 	 *
-	 * @example echo $menu->generate('context', array('active' => array('tag' => 'link','attributes' => array('style' => 'color:red;','id'=>'current'))));
+	 * @example echo $this->lists->generate('context', array('active' => array('tag' => 'link','attributes' => array('style' => 'color:red;','id'=>'current'))));
 	 * @return mixed string generated html or false if target doesnt exist
 	 */
 	function generate($source = 'main', $options = array()) {
