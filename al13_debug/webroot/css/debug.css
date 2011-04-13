@@ -1,0 +1,16 @@
+div.debug-dump { background: #fe8; font-size: 13px; display: inline-block; margin: 3px; padding: 2px 4px; border: 1px solid #338;}
+.debug-dump ul { list-style: none; margin: 0; padding: 0 0 5px 1em; }
+.debug-dump ul.properties { border-left: 1px dashed #559; }
+.debug-dump ul.array { border-left: 1px dashed #955; }
+div.debug-dump > ul { border: 0 !important; }
+.debug-dump li { padding: 0; margin: 0; list-style: none; border-bottom: 1px solid #446; }
+.debug-dump span { color: #C00; }
+.debug-dump span.value { color: #C00; font-weight: bold; font-size: 15px; }
+.debug-dump span.property { color: #304; font-weight: bold; font-size: 14px; }
+.debug-dump span.type { color: #009;  font-size: 14px;  }
+.debug-dump span.access { color: #049;  font-size: 12px;  }
+.debug-dump span.location { color: #336;}
+.debug-dump span.key { color: #304; font-weight: bold; font-size: 14px; }
+.debug-dump span.count { color: #044; }
+.debug-dump span.class { color: #282;  font-weight: bold; }
+.debug-dump span.class-id { color: #252; }
