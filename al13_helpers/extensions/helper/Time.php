@@ -247,7 +247,7 @@ class Time extends \al13_helpers\extensions\Helper {
 
 		$date = $date ?: date('Y-m-d H:i:s');
 		$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
-		$keys = $this->diff($date, compact('now') + $options);
+		$keys = $this->_diff($date, compact('now') + $options);
 
 		if ($end = $options['end']) {
 			$end = new DateTime(($date > $now ? '+' : '-') . $end);
