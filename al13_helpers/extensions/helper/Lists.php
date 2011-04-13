@@ -294,31 +294,11 @@ class Lists extends \al13_helpers\extensions\Helper {
 			$ulAttributes['id'] = $options['id'];
 		}
 
-		$menu = array();
-		// Find source menu
-		if (is_array($source)) {
-
-			$depth = count($source);
-			$menu = &$this->items;
-
-			for ($i = 0; $i < $depth; $i++) {
-				if (!empty($menu) && array_key_exists($source[$i], $menu)) {
-					$menu = &$menu[$source[$i]];
-				} else {
-					if (!isset($options['force']) || (isset($options['force']) && !$options['force']))
-						return false;
-				}
-			}
-
-		} else {
-			if (!isset($this->items[$source])) {
-				if (!isset($options['force']) || (isset($options['force']) && !$options['force']))
-					return false;
-			} else {
-				$menu = &$this->items[$source];
-			}
+		$menu = $this->findSource($source, $options);
+		if ($menu === false) {
+			return false;
 		}
-
+        
 		if (isset($options['reverse']) && $options['reverse'] == true) {
 			unset($options['reverse']);
 			$menu = array_reverse($menu);
@@ -334,7 +314,13 @@ class Lists extends \al13_helpers\extensions\Helper {
 		} else {
 			$here = $requestObj->url;
 		}
-
+		
+		$base = Router::match('/', $requestObj);
+		if ($base == '/') {
+			$baseOffset = 1;
+		} else {
+			$baseOffset = strlen($base);
+		}
 		// Generate menu items
 		foreach ($menu as $key => $item) {
 			$liAttributes = array();
@@ -362,8 +348,13 @@ class Lists extends \al13_helpers\extensions\Helper {
 				if (!isset($item[0][2]['title'])) {
 					$item[0][2]['title'] = $item[0][0];
 				}
-				$active = ($here == trim(Router::match($item[0][1], $requestObj), "/"));
+				$routeUrl = Router::match($item[0][1], $requestObj);
+				if ($baseOffset) $routeUrl = substr($routeUrl, $baseOffset);
+				$active = ($here == $routeUrl) || ($here == '/' && empty($routeUrl));
 				if ( isset($options['active']) && $active) {
+					if (isset($options['active']['li']) && is_array($options['active']['li'])) {
+						$liAttributes += $options['active']['li'];
+					}
 					if (is_array($options['active'])) {
 						$tagOptions = array();
 						foreach ($options['active'] as $a => $v) {
@@ -432,6 +423,40 @@ class Lists extends \al13_helpers\extensions\Helper {
 		}
 		return $out;
 	}
-}
+	
+	public function count($source = 'main') {
+		$list = $this->findSource($source);
+		if (!$list) return 0;
+		return count($list);
+	}
+	
+	private function findSource($source, $options = array()) {
+		
+		$list = array();
+		// Find source menu
+		if (is_array($source)) {
 
-?>
+			$depth = count($source);
+			$list = &$this->items;
+
+			for ($i = 0; $i < $depth; $i++) {
+				if (!empty($list) && array_key_exists($source[$i], $list)) {
+					$list = &$list[$source[$i]];
+				} else {
+					if (!isset($options['force']) || (isset($options['force']) && !$options['force']))
+						return false;
+				}
+			}
+
+		} else {
+			if (!isset($this->items[$source])) {
+				if (!isset($options['force']) || (isset($options['force']) && !$options['force']))
+					return false;
+			} else {
+				$list = &$this->items[$source];
+			}
+		}
+		return $list;
+	}
+	
+}
