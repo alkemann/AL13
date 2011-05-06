@@ -44,7 +44,7 @@ function dsb($value, $category = 'objects') {
     \al13_debug\util\Debug::$options['blacklist'][$category][] = $value;
 }
 
-// Extra short way of adding a blacklisted object property
+// Extra short way of adding a blacklisted array key
 function dbk($value) {
     $category = 'key';
     dsb($value, $category);
