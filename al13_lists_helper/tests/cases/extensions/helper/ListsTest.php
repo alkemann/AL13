@@ -7,9 +7,9 @@
  *
  */
 
-namespace al13_helpers\tests\cases\extensions\helper;
+namespace al13_lists_helper\tests\cases\extensions\helper;
 
-use \al13_helpers\extensions\helper\Lists;
+use \al13_lists_helper\extensions\helper\Lists;
 use \lithium\tests\mocks\template\helper\MockFormRenderer;
 use \lithium\net\http\Router;
 use \lithium\action\Request;

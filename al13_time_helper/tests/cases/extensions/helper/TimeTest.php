@@ -7,11 +7,11 @@
  * @license       http://opensource.org/licenses/bsd-license.php The BSD License
  */
 
-namespace al13_helpers\tests\cases\extensions\helper;
+namespace al13_time_helper\tests\cases\extensions\helper;
 
 use DateTime;
 use DateTimeZone;
-use al13_helpers\extensions\helper\Time;
+use al13_time_helper\extensions\helper\Time;
 use lithium\tests\mocks\template\helper\MockFormRenderer;
 
 /**

@@ -1,0 +1,5 @@
+{
+	"category": "AL13",
+	"title":    "al13_time_helper",
+	"description": "A view helper for li3 to render dates and times in interesting ways"
+}

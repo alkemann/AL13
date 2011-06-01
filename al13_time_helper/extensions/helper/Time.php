@@ -7,7 +7,7 @@
  * @license       http://opensource.org/licenses/bsd-license.php The BSD License
  */
 
-namespace al13_helpers\extensions\helper;
+namespace al13_time_helper\extensions\helper;
 
 use Exception;
 use DateTime;
@@ -41,7 +41,7 @@ use DateInterval;
  * See docblock for complete list of types and options
  *
  */
-class Time extends \al13_helpers\extensions\Helper {
+class Time extends \lithium\template\Helper {
 
 	const DAY = 86400;
 	const HOUR = 3600;

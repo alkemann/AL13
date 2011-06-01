@@ -9,14 +9,14 @@
  * @license       http://opensource.org/licenses/bsd-license.php The BSD License
  */
 
-namespace al13_helpers\extensions\helper;
+namespace al13_number_helper\extensions\helper;
 
 /**
  * Number helper library.
  *
  * Methods to make numbers more readable.
  */
-class Number extends \al13_helpers\extensions\Helper {
+class Number extends \lithium\template\Helper {
 
 	/**
 	 * Formats a number with a level of precision.
