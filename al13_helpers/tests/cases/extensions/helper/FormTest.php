@@ -21,8 +21,8 @@ class FormTest extends \lithium\test\Unit {
 
 	public function testAsField() {
 		$result = $this->form->fields('name', array('template' => '{:input}', 'label' => false));
-		$expected = '<input type="text" name="name" id="name" />';
-		$this->assertEqual($result, $expected);
+		$expected = '<input type="text" name="name" id="Name" />';
+		$this->assertEqual($expected, $result);
 	}
 
 	public function testCheckbox() {
@@ -33,9 +33,9 @@ class FormTest extends \lithium\test\Unit {
 		));
 		$expected = array(
 			array('div' => array('class' => 'input checkbox')),
-				array('input' => array('type' => 'hidden', 'name' => 'student', 'value' => 0)),
-				array('input' => array('type' => 'checkbox', 'name' => 'student', 'value' => 1, 'id' => 'student')),
-				array('label' => array('for' => 'student')),
+				array('input' => array('type' => 'hidden', 'name' => 'student', 'value' => '')),
+				array('input' => array('type' => 'checkbox', 'name' => 'student', 'value' => 1, 'id' => 'Student')),
+				array('label' => array('for' => 'Student')),
 					'Student',
 				'/label',
 			'/div',
@@ -54,27 +54,27 @@ class FormTest extends \lithium\test\Unit {
 		));
 		$expected = array(
 			array('li' => array('class' => 'input')),
-				array('label' => array('for' => 'name')),
+				array('label' => array('for' => 'Name')),
 					'Name',
 				'/label',
-				array('input' => array('type' => 'text', 'name' => 'name', 'id' => 'name')),
+				array('input' => array('type' => 'text', 'name' => 'name', 'id' => 'Name')),
 			'/li',
 			array('li' => array('class' => 'input')),
-				array('label' => array('for' => 'password')),
+				array('label' => array('for' => 'Password')),
 					'Password',
 				'/label',
-				array('input' => array('type' => 'password', 'name' => 'password', 'id' => 'password')),
+				array('input' => array('type' => 'password', 'name' => 'password', 'id' => 'Password')),
 			'/li',
 			array('li' => array('class' => 'input')),
-				array('input' => array('type' => 'text', 'name' => 'surname', 'id' => 'surname')),
+				array('input' => array('type' => 'text', 'name' => 'surname', 'id' => 'Surname')),
 			'/li',
 			array('li' => array('class' => 'input')),
-				array('label' => array('for' => 'present')),
+				array('label' => array('for' => 'Present')),
 					'Present',
 				'/label',
-				array('input' => array('type' => 'hidden', 'value' => 0, 'name' => 'present')),
+				array('input' => array('type' => 'hidden', 'value' => '', 'name' => 'present')),
 				array('input' => array(
-					'type' => 'checkbox', 'value' => 1, 'name' => 'present', 'id' => 'present'
+					'type' => 'checkbox', 'value' => 1, 'name' => 'present', 'id' => 'Present'
 				)),
 			'/li',
 		);
@@ -87,12 +87,12 @@ class FormTest extends \lithium\test\Unit {
 		$this->form->create($user);
 
 		$result = $this->form->radio('gender', array('value' => 'm'), array());
-		$expected = array('input' => array('type' => 'radio', 'name' => 'gender', 'value' => 'm'));
+		$expected = array('input' => array('type' => 'radio', 'name' => 'gender', 'value' => 'm', 'id' => 'Gender'));
 		$this->assertTags($result, $expected);
 
 		$result = $this->form->radio('gender', array('value' => 'f'), array());
 		$expected = array('input' => array(
-			'type' => 'radio', 'name' => 'gender', 'value' => 'f', 'checked' => 'checked'
+			'type' => 'radio', 'name' => 'gender', 'value' => 'f', 'checked' => 'checked', 'id' => 'Gender'
 		));
 		$this->assertTags($result, $expected);
 
