@@ -1,0 +1,5 @@
+{
+	"category": "AL13",
+	"title":    "al13_debug",
+	"description": "Development support through convenient, configurable and pretty debug outputs."
+}
