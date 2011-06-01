@@ -159,6 +159,10 @@ class TimeTest extends \lithium\test\Unit {
 			'format' => 'Y-m-d'
 		));
 		$this->assertPattern('/^2 weeks, [1|2] day(s)?$/', $result);
+
+		$expected = 'now';
+		$result = $this->time->to('words', $time, array('now' => $time));
+		$this->assertEqual($expected, $result);
 	}
 
 }
