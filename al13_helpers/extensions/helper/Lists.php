@@ -371,17 +371,6 @@ class Lists extends \al13_helpers\extensions\Helper {
 					$tagOptions['options'] = isset($options['active']['options'])? $options['active']['options']: array();
 					$listitem = $this->tag($tag, $tagOptions);
 				} else {
-					if ($active) {
-						if (is_array($item[0][2])) {
-							if (isset($item[0][2]['class'])) {
-								$item[0][2]['class'] .= ' active';
-							} else {
-								$item[0][2]['class'] = 'active';
-							}
-						} else {
-							$item[0][2] = array('class' => 'active');
-						}
-					}
 					$listitem = $this->tag('link', array(
 						'title' => $item[0][0],
 						'url' => $item[0][1],
