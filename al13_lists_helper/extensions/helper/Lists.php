@@ -112,13 +112,14 @@ class Lists extends \lithium\template\Helper {
 			$ret .= 'First</li><li>Previous';
 		} else {
 			$ret .= $this->tag('link', array('title' => 'First',
-				'url' => array('action' => 'index', 'args' => array('page:1','limit:'.$limit))
+				'url' => array('action' => 'index', '?' => array('page' => 1, 'limit' => $limit))
 			));
 			$ret .= '</li><li>';
 			$ret .= $this->tag('link', array('title' => 'Previous',
 				'url' => array(
 					'action' => 'index',
-					'args' => array('page:'.($page-1),'limit:'.$limit)
+					//'args' => array('page:'.($page-1),'limit:'.$limit)
+					'?' => array('page' => ($page-1), 'limit' => $limit)
 				)
 			));
 		}
@@ -132,7 +133,7 @@ class Lists extends \lithium\template\Helper {
 				$ret .= '['.$p.']';
 			} else {
 				$ret .= $this->tag('link', array('title' => '['.$p.']',
-					'url' => array('action' => 'index', 'args' => array('page:'.$p,'limit:'.$limit))
+					'url' => array('action' => 'index', '?' => array('page' => $p, 'limit' => $limit))
 				));
 			}
 			$ret .= '</li>';
@@ -144,12 +145,12 @@ class Lists extends \lithium\template\Helper {
 			$ret .= $this->tag('link', array('title' => 'Next',
 					'url' =>  array(
 						'action' => 'index',
-						'args' => array('page:'.($page+1),'limit:'.$limit)
+						'?' => array('page' => $page+1, 'limit' => $limit)
 					)
 				));
 			$ret .= '</li><li>';
 			$ret .= $this->tag('link', array('title' => 'Last',
-					'url' =>  array('action' => 'index', 'args'=>array('page:'.$p,'limit:'.$limit))
+					'url' =>  array('action' => 'index', '?' => array('page' => $p, 'limit' => $limit))
 				));
 		}
 		$ret .= '</li></ul>';
