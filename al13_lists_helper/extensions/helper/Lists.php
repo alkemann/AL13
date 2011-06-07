@@ -118,7 +118,6 @@ class Lists extends \lithium\template\Helper {
 			$ret .= $this->tag('link', array('title' => 'Previous',
 				'url' => array(
 					'action' => 'index',
-					//'args' => array('page:'.($page-1),'limit:'.$limit)
 					'?' => array('page' => ($page-1), 'limit' => $limit)
 				)
 			));
