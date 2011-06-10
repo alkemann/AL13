@@ -50,6 +50,14 @@ class Debug {
         
      
         switch ($mode) {
+			case 'Json': 
+				$locString = \al13_debug\util\adapters\Json::locationString($location);
+				echo '<script type="text/javascript">';
+				echo ' window.debug = {};';
+				echo ' window.debug.location = ' . $locString . ';' . "\n";
+				echo ' window.debug.dump = "' . $dump . '";';
+				echo '</script>';
+				break;
 			case 'Log' :
 				$locString = \al13_debug\util\adapters\Log::locationString($location);				
 				\lithium\analysis\Logger::debug($dump);
