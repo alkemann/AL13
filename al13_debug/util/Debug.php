@@ -50,6 +50,15 @@ class Debug {
         
      
         switch ($mode) {
+			case 'FirePHP':
+				$locString = \al13_debug\util\adapters\FirePHP::locationString($location);
+				require_once LITHIUM_LIBRARY_PATH . '/FirePHPCore/FirePHP.class.php';
+				$firephp = \FirePHP::getInstance(true);
+				if (!$firephp) throw new \Exception('FirePHP not installed');
+				$firephp->group($locString, array('Collapsed' => false, 'Color' => '#AA0000'));
+				$firephp->log($dump);
+				$firephp->groupEnd();
+				break;
 			case 'Json': 
 				$locString = \al13_debug\util\adapters\Json::locationString($location);
 				echo '<script type="text/javascript">';
