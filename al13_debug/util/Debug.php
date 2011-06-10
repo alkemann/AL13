@@ -7,7 +7,7 @@ namespace al13_debug\util;
 class Debug {
 
     public static $defaults = array(
-        'mode' => 'Log',
+        'mode' => 'Html',
         'depth' => 10,
         'avoid' => array(),
         'blacklist' => array(
