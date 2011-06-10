@@ -115,14 +115,4 @@ class Html {
         return $ret;
     }
 
-    public static function location($trace) {
-        $ret = array(
-            'file' => $trace[0]['file'],
-            'line' => $trace[0]['line']
-        );
-        if (isset($trace[1]['function'])) $ret['function'] = $trace[1]['function'];
-        if (isset($trace[1]['class'])) $ret['class'] = $trace[1]['class'];
-        return $ret;
-    }
-
 }
