@@ -59,8 +59,8 @@ class Debug {
 				echo '</script>';
 				break;
 			case 'Log' :
-				$locString = \al13_debug\util\adapters\Log::locationString($location);				
-				\lithium\analysis\Logger::debug($dump);
+				$locString = \al13_debug\util\adapters\Log::locationString($location);
+				\lithium\analysis\Logger::debug($locString . "\n" .$dump);
 				break;
 			case 'Html' :
 			default :
