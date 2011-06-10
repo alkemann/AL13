@@ -43,7 +43,7 @@ function dd() {
  * @param mixed $value Value
  */
 function ds($setting, $value) {
-    \al13_debug\util\Debug::$options[$setting] = $value;
+    \al13_debug\util\Debug::$defaults[$setting] = $value;
 }
 
 /**
@@ -55,10 +55,10 @@ function ds($setting, $value) {
  */
 function dsb($value, $category = 'property') {
     if (is_array($value)) {
-        \al13_debug\util\Debug::$options['blacklist'][$category] = $value;
+        \al13_debug\util\Debug::$defaults['blacklist'][$category] = $value;
         return;
     }
-    \al13_debug\util\Debug::$options['blacklist'][$category][] = $value;
+    \al13_debug\util\Debug::$defaults['blacklist'][$category][] = $value;
 }
 
 /**
@@ -97,10 +97,16 @@ function dbc($value) {
  * @param string $method Name of method to call on the Debug obect
  * @param boolean $echo True will echo, false will return result
  */
-function dw($method, $echo = true) {
+function dw($method) {
+    $args = func_get_args();
+    $trace = debug_backtrace();
+    $split = true;
+    if (count($args) == 1) {
+        $split = false;
+        $args = $args[0];
+    }
     $debug = \al13_debug\util\Debug::get_instance();
     $result = $debug->$method();
-    if (!$echo) return $result;
-    $debug->dump($result);
+    $debug->dump($result, compact('trace', 'split'));
 }
 
