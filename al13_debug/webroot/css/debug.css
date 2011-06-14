@@ -8,8 +8,8 @@ div#debugger {
  overflow: hidden;
 }
 div#debugger:hover {
- height: auto;
- overflow: visible;
+ height: 50%;
+ overflow: scroll;
 }
 div.debug-dump {
  background: #efefef; font-size: 12px; border: 1px solid #338;
