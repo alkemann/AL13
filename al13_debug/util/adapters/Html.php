@@ -25,7 +25,7 @@ class Html {
                     if ((is_array($value) || is_object($value)) && $debug->current_depth >= $debug->options['depth']) {
                         $ret .= ' <span class="class">array</span> ';
                         $ret .= '[<span class="count">' . count($value) . '</span>]</li>';
-                        $ret .= '<ul><li><span class="empty"> -- Debug Depth reached -- </span></li></ul>';
+                        $ret .= '<ul class="array"><li><span class="empty"> -- Debug Depth reached -- </span></li></ul>';
                         continue;
                     }
                     $ret .= $debug->dump_it($value);
