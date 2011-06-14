@@ -122,6 +122,11 @@ function dw($method) {
     $debug->dump($result, compact('trace', 'split'));
 }
 
+/**
+ * Output any stored up debugging from using the echo false option
+ *
+ * @param int $key array key of the output to put out
+ */
 function dout($key = null) {
     $debug = Debug::get_instance();
 	if ($key) {
