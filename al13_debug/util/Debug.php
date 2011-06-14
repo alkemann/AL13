@@ -7,6 +7,7 @@ namespace al13_debug\util;
 class Debug {
 
     public static $defaults = array(
+        'echo' => true,
         'mode' => 'Html',
         'depth' => 10,
         'avoid' => array(),
@@ -22,6 +23,7 @@ class Debug {
     public $current_depth;
     public $object_references;
     public $options;
+    public $output = array();
 
     public static function get_instance() {
         if (!static::$__instance) {
@@ -58,27 +60,33 @@ class Debug {
 				$firephp->group($locString, array('Collapsed' => false, 'Color' => '#AA0000'));
 				$firephp->log($dump);
 				$firephp->groupEnd();
+				return;
 				break;
 			case 'Json': 
 				$locString = \al13_debug\util\adapters\Json::locationString($location);
-				echo '<script type="text/javascript">';
-				echo ' window.debug = {};';
-				echo ' window.debug.location = ' . $locString . ';' . "\n";
-				echo ' window.debug.dump = "' . $dump . '";';
-				echo '</script>';
+				$output = '<script type="text/javascript">';
+				$output .= ' window.debug = {};';
+				$output .= ' window.debug.location = ' . $locString . ';' . "\n";
+				$output .= ' window.debug.dump = "' . $dump . '";';
+				$output .= '</script>';
 				break;
 			case 'Log' :
 				$locString = \al13_debug\util\adapters\Log::locationString($location);
 				\lithium\analysis\Logger::debug($locString . "\n" .$dump);
+				return;
 				break;
 			case 'Html' :
 			default :
 				$locString = \al13_debug\util\adapters\Html::locationString($location);
-				$result = '<style type="text/css">@import url("/al13/css/debug.css");</style>';
-				$result .= '<div class="debug-dump"><span class="location">' . $locString . '</span>'.
+				$output = '<style type="text/css">@import url("/al13/css/debug.css");</style>';
+				$output .= '<div class="debug-dump"><span class="location">' . $locString . '</span>'.
 					'<br> ' . $dump . '</div>';
-				echo $result;
 				break;
+		}
+		if ($options['echo']) {
+			echo $output;
+		} else {
+			$this->output[] = $output;
 		}
     }
 

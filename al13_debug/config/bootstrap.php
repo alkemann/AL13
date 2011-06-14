@@ -35,6 +35,9 @@ function dd() {
 
     ob_end_clean();
     $debug->dump($args, compact('trace', 'split'));
+	if (!empty($debug->output)) {
+		dout();
+	}
     die('<div style="margin-top: 25px;font-size: 10px;color: #500;">-Debug die-</div>');
 }
 
@@ -107,8 +110,21 @@ function dw($method) {
         $split = false;
         $args = $args[0];
     }
-    $debug = \al13_debug\util\Debug::get_instance();
+    $debug = Debug::get_instance();
     $result = $debug->$method();
     $debug->dump($result, compact('trace', 'split'));
 }
 
+function dout($key = null) {
+    $debug = Debug::get_instance();
+	if ($key) {
+		if (!isset($debug->output[$key])) {
+			throw new Exception('DEBUG: Not that many outputs in buffer');
+		}
+		echo $debug->output[$key];
+		return;
+	}
+	foreach ($debug->output as $out) {
+		echo $out;
+	}
+}
