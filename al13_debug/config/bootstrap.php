@@ -3,13 +3,15 @@
   * Global convenience methods
   */
 
+use al13_debug\util\Debug;
+
 /**
  * Dump any amount of paramters in a html styled var_dump
  * 
  * @param mixed any amount
  */
 function d() {
-    $debug = \al13_debug\util\Debug::get_instance();
+    $debug = Debug::get_instance();
     $args = func_get_args();
     $trace = debug_backtrace();
     $split = true;
@@ -22,7 +24,7 @@ function d() {
 
 // Debug dump any amount of variables and then die()
 function dd() {
-    $debug = \al13_debug\util\Debug::get_instance();
+    $debug = Debug::get_instance();
     $args = func_get_args();
     $trace = debug_backtrace();
     $split = true;
@@ -43,7 +45,7 @@ function dd() {
  * @param mixed $value Value
  */
 function ds($setting, $value) {
-    \al13_debug\util\Debug::$defaults[$setting] = $value;
+    Debug::$defaults[$setting] = $value;
 }
 
 /**
@@ -55,10 +57,10 @@ function ds($setting, $value) {
  */
 function dsb($value, $category = 'property') {
     if (is_array($value)) {
-        \al13_debug\util\Debug::$defaults['blacklist'][$category] = $value;
+        Debug::$defaults['blacklist'][$category] = $value;
         return;
     }
-    \al13_debug\util\Debug::$defaults['blacklist'][$category][] = $value;
+    Debug::$defaults['blacklist'][$category][] = $value;
 }
 
 /**
