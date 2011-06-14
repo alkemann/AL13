@@ -9,8 +9,8 @@ class Html {
     public static function dump_array(array $array, $debug) {
         $debug->current_depth++;
         $count = count($array);
-        $ret = ' type[<span class="type"> Array </span>] ';
-        $ret .= '[ <span class="count">' . $count . '</span> ] elements</li>';
+        $ret = ' <span class="class">array</span>';
+        $ret .= '[<span class="count">' . $count . '</span>]</li>';
         if ($count > 0) {
             $ret .= '<ul class="array">';
             if (in_array('array', $debug->options['avoid'])) {
@@ -23,8 +23,8 @@ class Html {
                         continue;
                     }
                     if ((is_array($value) || is_object($value)) && $debug->current_depth >= $debug->options['depth']) {
-                        $ret .= ' type[<span class="type"> Array </span>] ';
-                        $ret .= '[ <span class="count">' . count($value) . '</span> ] elements</li>';
+                        $ret .= ' <span class="class">array</span> ';
+                        $ret .= '[<span class="count">' . count($value) . '</span>]</li>';
                         $ret .= '<ul><li><span class="empty"> -- Debug Depth reached -- </span></li></ul>';
                         continue;
                     }
@@ -86,11 +86,11 @@ class Html {
             $refProp->setAccessible(true);
             $value = $refProp->getValue($obj);
             $ret .= '<li>';
-            $ret .= '[ <span class="property">' . $property . '</span> ][ <span class="access">' . $type . '</span>] => ';
+            $ret .= '<span class="access">' . $type . '</span> <span class="property">' . $property . '</span> ';
             if (in_array($property, $debug->options['blacklist']['property']))
                 $ret .= '<span class="empty"> -- Blacklisted Property Avoided -- </span>';
             else
-                $ret .= $debug->dump_it($value);
+                $ret .= ' : ' . $debug->dump_it($value);
             $ret .= '</li>';
         }
         return $i ? $ret : '';
@@ -100,10 +100,17 @@ class Html {
         $type = gettype($var);
         switch ($type) {
             case 'boolean': $var = $var ? 'true' : 'false'; break;
-            case 'string' : $var = '\'' . htmlentities($var) . '\''; break;
-            case 'NULL' : return '[ <span class="empty">NULL</span> ]'; break;
+            case 'string' : $length = strlen($var); $var = '\'' . htmlentities($var) . '\''; break;
+            case 'NULL' : return '<span class="empty">NULL</span>'; break;
         }
-        return '[ <span class="type">' . $type . '</span> ][ <span class="value">' . $var . '</span> ]';
+		$ret = '<span class="value ' . $type .'">' . $var . '</span> ';
+
+		if ($type == 'string') {
+			$ret .= '<span class="type">string[' . $length . ']</span>';
+		} else {
+			$ret .= '<span class="type">' . $type . '</span>';
+		}
+        return $ret;
     }
 
     public static function locationString($location) {

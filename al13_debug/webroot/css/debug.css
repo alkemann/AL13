@@ -1,8 +1,10 @@
 div.debug-dump {
- background: #fe8; font-size: 13px; border: 1px solid #338;
+ background: #efefef; font-size: 12px; border: 1px solid #338;
  display: inline-block; 
+ vertical-align: top;
  margin: 3px;
  padding: 2px 4px;
+ font-family: arial;
 }
 #debug-container div.debug-dump {
  display: block;
@@ -14,14 +16,30 @@ div.debug-dump {
 .debug-dump ul.properties { border-left: 1px dashed #559; }
 .debug-dump ul.array { border-left: 1px dashed #955; }
 div.debug-dump > ul { border: 0 !important; }
-.debug-dump li { padding: 0; margin: 0; list-style: none; border-bottom: 1px solid #446; }
-.debug-dump span { color: #C00; }
-.debug-dump span.value { color: #C00; font-weight: bold; font-size: 15px; }
-.debug-dump span.property { color: #304; font-weight: bold; font-size: 14px; }
-.debug-dump span.type { color: #009;  font-size: 14px;  }
-.debug-dump span.access { color: #049;  font-size: 12px;  }
+.debug-dump li { padding: 0; margin: 0; list-style: none; }
+.debug-dump span { color: #B82830; }
+.debug-dump span.value { color: #B82830; font-weight: bold; }
+.debug-dump span.value.integer{ color: #409b40;  }
+.debug-dump span.value.boolean { color: BLUE;  }
+.debug-dump span.property { color: #28B869; font-weight: bold; }
+.debug-dump span.type { color: #2830B8; }
+.debug-dump span.access { color: #EC9B00;   }
 .debug-dump span.location { color: #336;}
-.debug-dump span.key { color: #304; font-weight: bold; font-size: 14px; }
-.debug-dump span.count { color: #044; }
-.debug-dump span.class { color: #282;  font-weight: bold; }
-.debug-dump span.class-id { color: #252; }
+.debug-dump span.key { color: #2877B8; font-weight: bold; }
+.debug-dump span.count { color: #2877B8; }
+.debug-dump span.class { color: #6928B8;  font-weight: bold; }
+.debug-dump span.class-id { color: #2877B8; }
+
+.debug-dump span.access,
+.debug-dump span.type
+{
+ #visibility: hidden;
+ display: none;
+}
+.debug-dump li:hover span.access,
+.debug-dump li:hover span.type
+{
+ #visibility: visible;	
+ display: inline;
+}
+.debug-dump li:hover { background-color: #fff; }
