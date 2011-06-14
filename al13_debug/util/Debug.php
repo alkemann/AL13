@@ -49,8 +49,7 @@ class Debug {
             foreach ($var as $one) $dump .= $this->dump_it($one); // @todo . '<div>-</div>';
         } else
             $dump = $this->dump_it($var);
-        
-     
+
         switch ($mode) {
 			case 'FirePHP':
 				$locString = \al13_debug\util\adapters\FirePHP::locationString($location);
