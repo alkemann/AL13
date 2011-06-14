@@ -112,8 +112,9 @@ class Debug {
     }
 
     public function location($trace) {
+        $file = implode('/', array_diff(explode('/', $trace[0]['file']), explode('/', dirname(__FILE__))));
         $ret = array(
-            'file' => $trace[0]['file'],
+            'file' => $file,
             'line' => $trace[0]['line']
         );
         if (isset($trace[1]['function'])) $ret['function'] = $trace[1]['function'];
