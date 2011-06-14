@@ -110,7 +110,7 @@ class Html {
         extract($location);
         $ret = "line: <span>$line</span> &nbsp;".
                "file: <span>$file</span> &nbsp;";
-        $ret .= isset($class) ? "class: <span>$class</strong> &nbsp;" :'';
+        $ret .= isset($class) ? "class: <span>$class</span> &nbsp;" :'';
         $ret .= isset($function) && $function != 'include' ? "function: <span>$function</span> &nbsp;" :'';
         return $ret;
     }
