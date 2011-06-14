@@ -127,16 +127,10 @@ function dw($method) {
  *
  * @param int $key array key of the output to put out
  */
-function dout($key = null) {
+function dout($key = null, $incStyle = true) {
     $debug = Debug::get_instance();
-	if ($key) {
-		if (!isset($debug->output[$key])) {
-			throw new Exception('DEBUG: Not that many outputs in buffer');
-		}
-		echo $debug->output[$key];
-		return;
+	if ($key && $incStyle) {
+		$debug->out(0);
 	}
-	foreach ($debug->output as $out) {
-		echo $out;
-	}
+	$debug->out($key);
 }

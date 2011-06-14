@@ -23,7 +23,7 @@ class Debug {
     public $current_depth;
     public $object_references;
     public $options;
-    public $output = array();
+    public $output = array('<style type="text/css">@import url("/al13/css/debug.css");</style>');
 
     public static function get_instance() {
         if (!static::$__instance) {
@@ -68,6 +68,7 @@ class Debug {
 				$output .= ' window.debug.location = ' . $locString . ';' . "\n";
 				$output .= ' window.debug.dump = "' . $dump . '";';
 				$output .= '</script>';
+				$this->output[] = $output;
 				break;
 			case 'Log' :
 				$locString = \al13_debug\util\adapters\Log::locationString($location);
@@ -77,17 +78,28 @@ class Debug {
 			case 'Html' :
 			default :
 				$locString = \al13_debug\util\adapters\Html::locationString($location);
-				$output = '<style type="text/css">@import url("/al13/css/debug.css");</style>';
-				$output .= '<div class="debug-dump"><span class="location">' . $locString . '</span>'.
-					'<br> ' . $dump . '</div>';
+				$this->output[] = '<div class="debug-dump"><div class="debug-location">' . $locString . '</div>'.
+					'<div class="debug-content"> ' . $dump . '</div></div>';
 				break;
 		}
 		if ($options['echo']) {
-			echo $output;
-		} else {
-			$this->output[] = $output;
+			$this->out();
 		}
     }
+
+	public function out($key = null) {
+		if ($key !== null) {
+			if (!isset($this->output[$key])) {
+				throw new Exception('DEBUG: Not that many outputs in buffer');
+			}
+			echo $this->output[$key];
+			return;
+		}
+		foreach ($this->output as $out) {
+			echo $out;
+		}
+		$this->output = array();
+	}
 
     public function defines() {
         $defines = get_defined_constants();
