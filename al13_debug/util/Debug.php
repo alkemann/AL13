@@ -25,6 +25,11 @@ class Debug {
     public $options;
     public $output = array('<style type="text/css">@import url("/al13/css/debug.css");</style>');
 
+	/**
+	 * Get the singleton instance
+	 *
+	 * @return al13_debug\util\Debug 
+	 */
     public static function get_instance() {
         if (!static::$__instance) {
             $class = __CLASS__;
@@ -33,6 +38,12 @@ class Debug {
         return static::$__instance;
     }
 
+	/**
+	 * Dump
+	 *
+	 * @param mixed $var
+	 * @param array $options
+	 */
     public function dump($var, $options = array()) {
         $options += self::$defaults + array('split' => false);
         $this->options = $options;
@@ -87,6 +98,11 @@ class Debug {
 		}
     }
 
+	/**
+	 * Echo out stored debugging
+	 *
+	 * @param int $key
+	 */
 	public function out($key = null) {
 		if ($key !== null) {
 			if (!isset($this->output[$key])) {
@@ -101,6 +117,11 @@ class Debug {
 		$this->output = array();
 	}
 
+	/**
+	 * Grab global defines, will start at 'FIRST_APP_CONSTANT', if defined
+	 *
+	 * @return type 
+	 */
     public function defines() {
         $defines = get_defined_constants();
         $ret = array(); $offset = -1;
@@ -113,6 +134,12 @@ class Debug {
         return $ret;
     }
 
+	/**
+	 * Send a variable to the adapter and return it's formated output
+	 *
+	 * @param mixed $var
+	 * @return string
+	 */
     public function dump_it($var) {
 		$adapter = '\al13_debug\util\adapters\\'. $this->options['mode'];
         if (is_array($var))
@@ -123,6 +150,12 @@ class Debug {
             return $adapter::dump_other($var);
     }
 
+	/**
+	 * Create an array that describes the location of the debug call
+	 *
+	 * @param string $trace
+	 * @return array
+	 */
     public function location($trace) {
 		$root = substr($_SERVER['DOCUMENT_ROOT'], 0 , strlen('app/webroot') * -1);
         $file = implode('/', array_diff(explode('/', $trace[0]['file']), explode('/', $root)));
