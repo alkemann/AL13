@@ -1,3 +1,16 @@
+div#debugger {
+ position: absolute;
+ top: 0;
+ left: 0;
+ border-top: 15px solid ORANGE;
+ height: 0;
+ width: 100%;
+ overflow: hidden;
+}
+div#debugger:hover {
+ height: auto;
+ overflow: visible;
+}
 div.debug-dump {
  background: #efefef; font-size: 12px; border: 1px solid #338;
  display: inline-block; 

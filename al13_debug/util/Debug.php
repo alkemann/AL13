@@ -94,7 +94,7 @@ class Debug {
 				break;
 		}
 		if ($options['echo']) {
-			$this->out();
+			$this->__out();
 		}
     }
 
@@ -104,6 +104,14 @@ class Debug {
 	 * @param int $key
 	 */
 	public function out($key = null) {
+		if ($this->options['mode'] == 'Html') {
+			\al13_debug\util\adapters\Html::top($this->output, $key);
+			return;
+		}
+		$this->__out($key);
+	}
+	
+	private function __out($key = null) {
 		if ($key !== null) {
 			if (!isset($this->output[$key])) {
 				throw new Exception('DEBUG: Not that many outputs in buffer');
