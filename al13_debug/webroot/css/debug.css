@@ -1,4 +1,15 @@
-div.debug-dump { background: #fe8; font-size: 13px; display: inline-block; margin: 3px; padding: 2px 4px; border: 1px solid #338;}
+div.debug-dump {
+ background: #fe8; font-size: 13px; border: 1px solid #338;
+ display: inline-block; 
+ margin: 3px;
+ padding: 2px 4px;
+}
+#debug-container div.debug-dump {
+ display: block;
+}
+#debug-container div.debug-content {
+ display: none;
+}
 .debug-dump ul { list-style: none; margin: 0; padding: 0 0 5px 1em; }
 .debug-dump ul.properties { border-left: 1px dashed #559; }
 .debug-dump ul.array { border-left: 1px dashed #955; }
