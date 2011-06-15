@@ -3,6 +3,7 @@ div#debugger {
  top: 0;
  left: 0;
  border-top: 15px solid ORANGE;
+ background-color: ORANGE;
  height: 0;
  width: 100%;
  overflow: hidden;
