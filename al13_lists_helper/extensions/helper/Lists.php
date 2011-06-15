@@ -150,6 +150,13 @@ class Lists extends \lithium\template\Helper {
 		return $ret;
 	}
 
+	/**
+	 * Create urls that remember parameters and querys
+	 *
+	 * @param array $query
+	 * @param array $url
+	 * @return array 
+	 */
 	private function _url(array $query = array(), array $url = array()) {
 		$request = $this->_context->request();
 		$url = $url + $request->params;
@@ -157,6 +164,13 @@ class Lists extends \lithium\template\Helper {
 		return $url;
 	}
 
+	/**
+	 * Create a html link for sorting by the field, used with pagination
+	 *
+	 * @param string $field
+	 * @param string $title
+	 * @return string 
+	 */
 	public function sort_header($field, $title = null) {
 		if (!$title) {
 			$title = \lithium\util\Inflector::humanize($field);
