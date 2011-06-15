@@ -112,14 +112,11 @@ class Lists extends \lithium\template\Helper {
 			$ret .= 'First</li><li>Previous';
 		} else {
 			$ret .= $this->tag('link', array('title' => 'First',
-				'url' => array('action' => 'index', '?' => array('page' => 1, 'limit' => $limit))
+				'url' => $this->_url(array('page' => 1, 'limit' => $limit))
 			));
 			$ret .= '</li><li>';
 			$ret .= $this->tag('link', array('title' => 'Previous',
-				'url' => array(
-					'action' => 'index',
-					'?' => array('page' => ($page-1), 'limit' => $limit)
-				)
+				'url' => $this->_url(array('page' => ($page-1), 'limit' => $limit))
 			));
 		}
 		$ret .= '</li>';
@@ -132,7 +129,7 @@ class Lists extends \lithium\template\Helper {
 				$ret .= '['.$p.']';
 			} else {
 				$ret .= $this->tag('link', array('title' => '['.$p.']',
-					'url' => array('action' => 'index', '?' => array('page' => $p, 'limit' => $limit))
+					'url' => $this->_url(array('page' => $p, 'limit' => $limit))
 				));
 			}
 			$ret .= '</li>';
@@ -142,18 +139,37 @@ class Lists extends \lithium\template\Helper {
 			$ret .= 'Next</li><li>Last';
 		} else {
 			$ret .= $this->tag('link', array('title' => 'Next',
-					'url' =>  array(
-						'action' => 'index',
-						'?' => array('page' => $page+1, 'limit' => $limit)
-					)
+					'url' => $this->_url(array('page' => $page+1, 'limit' => $limit))
 				));
 			$ret .= '</li><li>';
 			$ret .= $this->tag('link', array('title' => 'Last',
-					'url' =>  array('action' => 'index', '?' => array('page' => $p, 'limit' => $limit))
+					'url' => $this->_url(array('page' => $p, 'limit' => $limit))
 				));
 		}
 		$ret .= '</li></ul>';
 		return $ret;
+	}
+
+	private function _url(array $query = array(), array $url = array()) {
+		$request = $this->_context->request();
+		$url = $url + $request->params;
+		$url['?'] = $query + $request->query;
+		return $url;
+	}
+
+	public function sort_header($title, $field = null) {
+		if (!$field) {
+			$field = \strtolower($title);
+		}
+		$url = $this->_url();
+		if (!isset($url['?']['dir'])) {
+			$url['?']['dir'] = 'ASC';
+		}
+		if (isset($url['?']['sort']) && $url['?']['sort'] == $field) {
+			$url['?']['dir'] = ($url['?']['dir'] == 'ASC') ? 'DESC' : 'ASC';
+		}
+		$url['?']['sort'] = $field;
+		return $this->tag('link', array('title' => \lithium\util\Inflector::humanize($field), 'url' => $url));
 	}
 
 	/**
