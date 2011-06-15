@@ -39,9 +39,9 @@ function dd() {
         $split = false;
         $args = $args[0];
     }
-
+	$echo = true;
     ob_end_clean();
-    $debug->dump($args, compact('trace', 'split'));
+    $debug->dump($args, compact('trace', 'split', 'echo'));
 	if (!empty($debug->output)) {
 		dout();
 	}
