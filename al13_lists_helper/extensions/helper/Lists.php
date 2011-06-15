@@ -157,9 +157,9 @@ class Lists extends \lithium\template\Helper {
 		return $url;
 	}
 
-	public function sort_header($title, $field = null) {
-		if (!$field) {
-			$field = \strtolower($title);
+	public function sort_header($field, $title = null) {
+		if (!$title) {
+			$title = \lithium\util\Inflector::humanize($field);
 		}
 		$url = $this->_url();
 		if (!isset($url['?']['dir'])) {
@@ -169,7 +169,7 @@ class Lists extends \lithium\template\Helper {
 			$url['?']['dir'] = ($url['?']['dir'] == 'ASC') ? 'DESC' : 'ASC';
 		}
 		$url['?']['sort'] = $field;
-		return $this->tag('link', array('title' => \lithium\util\Inflector::humanize($field), 'url' => $url));
+		return $this->tag('link', array('title' => $title, 'url' => $url));
 	}
 
 	/**
