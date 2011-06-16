@@ -106,6 +106,7 @@ class Lists extends \lithium\template\Helper {
 	 * @return string Generated HTML
 	 */
 	public function pagination($total, $limit, $page) {
+		if ($limit > $total) return;
 		$ret = '<ul class="actions"><li>';
 
 		if ($total <= $limit || $page == 1) {
