@@ -152,6 +152,35 @@ class Lists extends \lithium\template\Helper {
 	}
 
 	/**
+	 * Create a drop-down select to manipulate the amount of items per pagination page
+	 *
+	 * @param array $list Optionally provide a value=>label array of options
+	 * @return string
+	 */
+	public function limit_select($list = null) {
+		$form = $this->_context->form;
+		$ret = $form->create(null, array('id' => 'pagination-form', 'method' => 'GET'));
+		$query = $this->_context->request()->query;
+		foreach (array('sort', 'dir') as $field)
+			if (isset($query[$field]))
+				$ret .= $form->hidden($field, array('value' => $query[$field], 'id' => 'pagination-'.$field));
+		if ($list == null)
+			$list = array(
+				'Page Count',
+				5  => 'Five',
+				10 => 'Ten',
+				25 => '25',
+				50 => 'Fifty'
+			);
+		$ret .= $form->select('limit', $list, array(
+			'id' => 'pagination-limit',
+			'onchange' => 'submit()'
+		));
+		$ret .= $form->end();
+		return $ret;
+	}
+
+	/**
 	 * Create urls that remember parameters and querys
 	 *
 	 * @param array $query
