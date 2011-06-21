@@ -54,14 +54,25 @@ class Debug {
         extract($options);
         $location = $this->location($trace);
 
-        $dump = '';
+        $dump = array();
         if ($options['split'] && is_array($var)) {
             $this->current_depth = 0;
-            foreach ($var as $one) $dump .= $this->dump_it($one); // @todo . '<div>-</div>';
+            foreach ($var as $one) {
+				$dump[] = $this->dump_it($one);
+				$dump[] = " - ";
+			}
+			$dump = array_slice($dump, 0, -1);
         } else
-            $dump = $this->dump_it($var);
+            $dump[] = $this->dump_it($var);
 
         switch ($mode) {
+			case 'Li3FirePHP':
+				$locString = \al13_debug\util\adapters\Li3FirePHP::locationString($location);
+				\lithium\analysis\Logger::debug($locString);
+				foreach ($dump as $l)
+					\lithium\analysis\Logger::debug($l);
+				return;
+				break;
 			case 'FirePHP':
 				$locString = \al13_debug\util\adapters\FirePHP::locationString($location);
 				require_once LITHIUM_LIBRARY_PATH . '/FirePHPCore/FirePHP.class.php';
