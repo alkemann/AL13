@@ -112,10 +112,10 @@ class Json {
         $type = gettype($var);
         switch ($type) {
             case 'boolean': $var = $var ? 'true' : 'false'; break;
-            case 'string' : $var = '\'' . htmlentities($var) . '\''; break;
+            case 'string' : $length = strlen($var); $var = '\'' . htmlentities($var) . '\' [' . $length . ']'; break;
             case 'NULL' : return '[ NULL ]'; break;
         }
-        return '[ ' . $type . '][ ' . $var . ' ] ' . "\\\n";
+        return $var . ' (' . $type . ')';
     }
 
     public static function locationString($location) {

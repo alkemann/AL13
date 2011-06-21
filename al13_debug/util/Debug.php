@@ -86,11 +86,11 @@ class Debug {
 				break;
 			case 'Json': 
 				$locString = \al13_debug\util\adapters\Json::locationString($location);
-				$output = '<script type="text/javascript">';
-				$output .= ' window.debug = {};';
-				$output .= ' window.debug.location = ' . $locString . ';' . "\n";
-				$output .= ' window.debug.dump = "' . $dump . '";';
-				$output .= '</script>';
+				$output = '<script type="text/javascript">'. "\n";
+				$output .= ' window.debug = window.debug || [];';
+				$output .= ' window.debug.push( { "location" : ' . $locString . ', '. "\n" ;
+				$output .= ' "dump" : "' . implode('', $dump) . '" });';
+				$output .= '</script>'. "\n";
 				$this->output[] = $output;
 				break;
 			case 'Log' :
