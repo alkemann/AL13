@@ -11,24 +11,6 @@ if (isset($config['defaults']) && !empty($config['defaults'])) {
 	Debug::$defaults = $config['defaults'] + Debug::$defaults;
 }
 
-// Li3 specific code for using the Li3 FirePHP logger adapter
-use lithium\action\Dispatcher;
-use lithium\analysis\Logger;
-
-/*
-Logger::config(array(
-    'debug' => array('adapter' => 'FirePhp')
-));
-*/
-Dispatcher::applyFilter('_call', function($self, $params, $chain) {
-    if (isset($params['callable']->response)) {
-        Logger::adapter('debug')->bind($params['callable']->response);
-    }
-    return $chain->next($self, $params, $chain);
-});
-
-
-
 /**
  * Dump any amount of paramters in a html styled var_dump
  * 
