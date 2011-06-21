@@ -58,8 +58,7 @@ class Debug {
         if ($options['split'] && is_array($var)) {
             $this->current_depth = 0;
             foreach ($var as $one) {
-				$dump[] = $this->dump_it($one);
-				$dump[] = " - ";
+				$dump = array_merge($dump, array($this->dump_it($one), ' - '));
 			}
 			$dump = array_slice($dump, 0, -1);
         } else
@@ -72,7 +71,16 @@ class Debug {
 				$firephp = \FirePHP::getInstance(true);
 				if (!$firephp) throw new \Exception('FirePHP not installed');
 				$firephp->group($locString, array('Collapsed' => false, 'Color' => '#AA0000'));
-				$firephp->log($dump);
+
+				$f = function($o) use ($firephp,&$f) {
+					if (is_array($o)) {
+						foreach ($o as $r)
+							$f($r);
+					} else {
+						$firephp->log($o);
+					}
+				};
+				$f($dump);
 				$firephp->groupEnd();
 				return;
 				break;
