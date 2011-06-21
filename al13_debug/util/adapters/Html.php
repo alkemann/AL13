@@ -88,7 +88,7 @@ class Html {
             $ret .= '<li>';
             $ret .= '<span class="access">' . $type . '</span> <span class="property">' . $property . '</span> ';
             if (in_array($property, $debug->options['blacklist']['property']))
-                $ret .= '<span class="empty"> -- Blacklisted Property Avoided -- </span>';
+                $ret .= ' : <span class="empty"> -- Blacklisted Property Avoided -- </span>';
             else
                 $ret .= ' : ' . $debug->dump_it($value);
             $ret .= '</li>';
