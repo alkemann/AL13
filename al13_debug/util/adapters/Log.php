@@ -12,22 +12,22 @@ class Log {
     public static function dump_array(array $array, $debug) {
         $debug->current_depth++;
         $count = count($array);
-        $ret = ' type[ Array ] ';
-        $ret .= '[ ' . $count . " ] elements \n";
+        $ret = ' array ';
+        $ret .= '[' . $count . "] \n";
         if ($count > 0) {
             if (in_array('array', $debug->options['avoid'])) {
                 $ret .= " -- Array Type Avoided -- \n";
             } else 
                 foreach ($array as $key => $value) {
 					for ($i=0;$i < $debug->current_depth; $i++) { $ret .= '  '; }
-                    $ret .= '[ ' . $key . ' ] => ';
+                    $ret .= '' . $key . ' => ';
                     if (is_string($key) && in_array($key, $debug->options['blacklist']['key'])) {
 						$ret .= "-- Blacklisted Key Avoided -- \n";
                         continue;
                     }
                     if ((is_array($value) || is_object($value)) && $debug->current_depth >= $debug->options['depth']) {
-                        $ret .= ' type[ Array ] ';
-                        $ret .= '[ ' . count($value) . ' ] elements';
+                        $ret .= 'array ';
+                        $ret .= '[' . count($value) . ']';
                         $ret .= "\n";
 						for ($i=0;$i <= $debug->current_depth; $i++) { $ret .= '  '; }
 						$ret .= "-- Debug Depth reached -- \n";
@@ -45,8 +45,7 @@ class Log {
         $hash = spl_object_hash($obj);
         $id = substr($hash, 9, 7);
         $class = get_class($obj);
-        $ret = ' object[  ' . $id . '  ] ';
-        $ret .= ' class[ ' . $class . "] \n";
+        $ret = $class . ' [' . $id . '] ' . " \n";
         if (in_array(get_class($obj), $debug->options['blacklist']['class'])) {
             $debug->current_depth--;
 			for ($i=0;$i <= $debug->current_depth; $i++) { $ret .= '  '; }
@@ -99,7 +98,7 @@ class Log {
             $refProp->setAccessible(true);
             $value = $refProp->getValue($obj);
 			for ($i=0;$i < $debug->current_depth; $i++) { $ret .= '  '; }
-            $ret .= '[ ' . $property . ' ][ ' . $type . ' ] => ';
+            $ret .= $type . ' ' . $property . ' : ';
             if (in_array($property, $debug->options['blacklist']['property']))
                 $ret .= "-- Blacklisted Property Avoided -- \n";
             else
@@ -112,10 +111,10 @@ class Log {
         $type = gettype($var);
         switch ($type) {
             case 'boolean': $var = $var ? 'true' : 'false'; break;
-            case 'string' : $var = '\'' . htmlentities($var) . '\''; break;
+            case 'string' : $length = strlen($var); $var = '\'' . htmlentities($var) . '\' [' . $length . ']'; break;
             case 'NULL' : return '[ NULL ]'; break;
         }
-        return '[ ' . $type . '][ ' . $var . ' ] ' . "\n";
+        return $var . ' (' . $type . ')' . "\n";
     }
 
     public static function locationString($location) {

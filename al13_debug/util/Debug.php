@@ -95,7 +95,7 @@ class Debug {
 				break;
 			case 'Log' :
 				$locString = \al13_debug\util\adapters\Log::locationString($location);
-				\lithium\analysis\Logger::debug($locString . "\n" .$dump);
+				\lithium\analysis\Logger::debug($locString . "\n" . implode("\n", $dump));
 				return;
 				break;
 			case 'Html' :
