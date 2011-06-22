@@ -190,11 +190,17 @@ class Lists extends \lithium\template\Helper {
 	public function filter_input($field, array $options = array()) {
 		$form = $this->_context->form;
 		$ret = $form->create(null, array('id' => 'filter-form', 'method' => 'GET'));
+
+		$query = $this->_context->request()->query;
+		foreach (array('sort', 'dir', 'limit') as $p)
+			if (isset($query[$p]))
+				$ret .= $form->hidden($p, array('value' => $query[$p], 'id' => 'filter-'.$p));
+
 		if (is_array($field))
-			$ret .= $form->select('field', $field);
+			$ret .= $form->select('field', $field, array('value' => isset($query['field']) ? $query['field'] : null ));
 		else
 			$ret .= $form->hidden('field', array('value' => $field));
-		$ret .= $form->text('value');
+		$ret .= $form->text('value', array('value' => isset($query['value']) ? $query['value'] : null ));
 		$ret .= $form->submit('Filter');
 		$ret .= $form->end();
 		return $ret;
