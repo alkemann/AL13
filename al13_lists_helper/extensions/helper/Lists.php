@@ -211,7 +211,7 @@ class Lists extends \lithium\template\Helper {
 	 *
 	 * @param array $query
 	 * @param array $url
-	 * @return array 
+	 * @return array
 	 */
 	private function _url(array $query = array(), array $url = array()) {
 		$request = $this->_context->request();
@@ -225,7 +225,7 @@ class Lists extends \lithium\template\Helper {
 	 *
 	 * @param string $field
 	 * @param string $title
-	 * @return string 
+	 * @return string
 	 */
 	public function sort_header($field, $title = null) {
 		if (!$title) {
@@ -384,7 +384,7 @@ class Lists extends \lithium\template\Helper {
 		if ($menu === false) {
 			return false;
 		}
-        
+
 		if (isset($options['reverse']) && $options['reverse'] == true) {
 			unset($options['reverse']);
 			$menu = array_reverse($menu);
@@ -400,7 +400,7 @@ class Lists extends \lithium\template\Helper {
 		} else {
 			$here = $requestObj->url;
 		}
-		
+
 		$base = Router::match('/', $requestObj);
 		if ($base == '/') {
 			$baseOffset = 1;
@@ -481,7 +481,7 @@ class Lists extends \lithium\template\Helper {
 				$list .= $listitem;
 			} else {
 				$list .= $this->tag('list-item',
-					array('content' => $listitem,'options' => $liAttributes));	
+					array('content' => $listitem,'options' => $liAttributes));
 			}
 		}
 
@@ -498,15 +498,15 @@ class Lists extends \lithium\template\Helper {
 		}
 		return $out;
 	}
-	
+
 	public function count($source = 'main') {
 		$list = $this->findSource($source);
 		if (!$list) return 0;
 		return count($list);
 	}
-	
+
 	private function findSource($source, $options = array()) {
-		
+
 		$list = array();
 		// Find source menu
 		if (is_array($source)) {
