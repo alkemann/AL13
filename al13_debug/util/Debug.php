@@ -102,7 +102,7 @@ class Debug {
 			default :
 				$locString = \al13_debug\util\adapters\Html::locationString($location);
 				$this->output[] = '<div class="debug-dump"><div class="debug-location">' . $locString . '</div>'.
-					'<div class="debug-content"> ' . implode("\n", $dump) . '</div></div>';
+					'<div class="debug-content"> ' . implode("<br>\n", $dump) . '</div></div>';
 				break;
 		}
 		if ($options['echo']) {
