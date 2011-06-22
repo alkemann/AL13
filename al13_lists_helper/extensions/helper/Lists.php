@@ -181,6 +181,26 @@ class Lists extends \lithium\template\Helper {
 	}
 
 	/**
+	 * Render a textbox that will let you filter by a field
+	 *
+	 * @param mixed $field
+	 * @param array $options
+	 * @return string
+	 */
+	public function filter_input($field, array $options = array()) {
+		$form = $this->_context->form;
+		$ret = $form->create(null, array('id' => 'filter-form', 'method' => 'GET'));
+		if (is_array($field))
+			$ret .= $form->select('field', $field);
+		else
+			$ret .= $form->hidden('field', array('value' => $field));
+		$ret .= $form->text('value');
+		$ret .= $form->submit('Filter');
+		$ret .= $form->end();
+		return $ret;
+	}
+
+	/**
 	 * Create urls that remember parameters and querys
 	 *
 	 * @param array $query
