@@ -437,7 +437,7 @@ class Lists extends \lithium\template\Helper {
 				$routeUrl = Router::match($item[0][1], $requestObj);
 				if ($baseOffset) $routeUrl = substr($routeUrl, $baseOffset);
 				$active = ($here == $routeUrl) || ($here == '/' && empty($routeUrl));
-				if ( isset($options['active']) && $active) {
+				if ( isset($options['active']) && $options['active'] && $active) {
 					if (isset($options['active']['li']) && is_array($options['active']['li'])) {
 						$liAttributes += $options['active']['li'];
 					}
