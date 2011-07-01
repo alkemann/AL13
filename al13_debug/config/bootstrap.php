@@ -133,3 +133,16 @@ function dout($key = null, $incStyle = true) {
 	}
 	$debug->out($key);
 }
+
+/**
+ * Returns array of output without the leading style html tag
+ *
+ * Place in media handler for json as part of the container
+ *
+ * @param string $key
+ * @return string
+ */
+function daout($key = null) {
+    $debug = Debug::get_instance();
+	return $debug->array_out($key);
+}

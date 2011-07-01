@@ -86,12 +86,7 @@ class Debug {
 				break;
 			case 'Json': 
 				$locString = \al13_debug\util\adapters\Json::locationString($location);
-				$output = '<script type="text/javascript">'. "\n";
-				$output .= ' window.debug = window.debug || [];';
-				$output .= ' window.debug.push( { "location" : ' . $locString . ', '. "\n" ;
-				$output .= ' "dump" : "' . implode('', $dump) . '" });';
-				$output .= '</script>'. "\n";
-				$this->output[] = $output;
+				$this->output[] = array('location' => $locString, 'dump' => $dump);
 				break;
 			case 'Log' :
 				$locString = \al13_debug\util\adapters\Log::locationString($location);
@@ -109,6 +104,23 @@ class Debug {
 			$this->__out();
 		}
     }
+
+	/**
+	 * Return output dump as array
+	 *
+	 * @param string $key
+	 * @return array
+	 */
+	public function array_out($key = null) {
+		if (count($this->output) < 2 || ($key && !isset($this->output[$key]))) {
+			return array();
+		}
+		if ($key) {
+			return $this->output[$key];
+		}
+		array_shift($this->output);
+		return $this->output;
+	}
 
 	/**
 	 * Echo out stored debugging

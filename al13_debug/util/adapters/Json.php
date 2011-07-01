@@ -4,40 +4,62 @@
  */
 namespace al13_debug\util\adapters;
 
-/**F
- * Requires li3 logging enabled
+/**
+ * Put's dump output in arrays such that they go nicely
+ * into json_encode. Suggested use for Lithium is for json
+ * by inserting the debug dump in the media handler, as per
+ * a dout() in an html layout. Example:
+ * 
+ * {{{
+ * /// app/config/bootstrap/media.php
+ * use lithium\net\http\Media;
+ * 
+ * 	Media::type('json', 'application/json', array(
+ * 		'cast' => true,
+ * 		'layout' => '{:library}/views/layouts/default.json.php',
+ * 		'type' => 'json',
+ * 		'encode' => function($data) {
+ * 			$container = array(
+ * 				'name' => 'Container',
+ * 				'debug' => daout(),
+ * 				'count' => count($data['data']),
+ *				'maxCount' => $data['total'] ?: $count,
+ *				'data' => $data['data']
+ * 			);
+ * 			return json_encode($container);
+ * 		},
+ * 		'decode' => function($data) {
+ * 			return json_decode($data, true);
+ * 		}
+ * 	));
+ * }}}
+ * 
  */
 class Json {
 
     public static function dump_array(array $array, $debug) {
         $debug->current_depth++;
         $count = count($array);
-        $ret = ' type[ Array ] ';
-        $ret .= '[ ' . $count . " ] elements \\\n";
+        $ret = array();
         if ($count > 0) {
             if (in_array('array', $debug->options['avoid'])) {
-                $ret .= " -- Array Type Avoided -- \\\n";
+                $ret[] = ' -- Array Type Avoided -- ';
             } else 
                 foreach ($array as $key => $value) {
-					for ($i=0;$i < $debug->current_depth; $i++) { $ret .= '  '; }
-                    $ret .= '[ ' . $key . ' ] => ';
+					if (!is_numeric($key)) $key = '\'' . $key . '\'';
                     if (is_string($key) && in_array($key, $debug->options['blacklist']['key'])) {
-						$ret .= "-- Blacklisted Key Avoided -- \\\n";
+                        $ret[$key. " "] = ' -- Blacklisted Key Avoided -- ';
                         continue;
                     }
                     if ((is_array($value) || is_object($value)) && $debug->current_depth >= $debug->options['depth']) {
-                        $ret .= ' type[ Array ] ';
-                        $ret .= '[ ' . count($value) . ' ] elements';
-                        $ret .= "\\\n";
-						for ($i=0;$i <= $debug->current_depth; $i++) { $ret .= '  '; }
-						$ret .= "-- Debug Depth reached -- \\\n";
+                        $ret[$key. " "] = array ( 'array [' . count($value) .']' => ' -- Debug Depth reached -- ');
                         continue;
                     }
-                    $ret .= $debug->dump_it($value);
+					$ret[$key. " "] = $debug->dump_it($value);
                 }
         }
         $debug->current_depth--;
-        return $ret;    
+        return array(' array [' . $count . ']' => $ret);
     }
 
     public static function dump_object($obj, $debug) {
@@ -45,67 +67,68 @@ class Json {
         $hash = spl_object_hash($obj);
         $id = substr($hash, 9, 7);
         $class = get_class($obj);
-        $ret = ' object[  ' . $id . '  ] ';
-        $ret .= ' class[ ' . $class . "] \\\n";
+        $ret = array();
         if (in_array(get_class($obj), $debug->options['blacklist']['class'])) {
             $debug->current_depth--;
-			for ($i=0;$i <= $debug->current_depth; $i++) { $ret .= '  '; }
-			$ret .= "-- Blacklisted Object Avoided -- \\\n";
-            return $ret;
+			$ret = " -- Blacklisted Object Avoided -- ";
+            return array( $class . ' [' . $id . ']'  => $ret);
         }
         if (isset($debug->object_references[$hash]))  {
             $debug->current_depth--;
-			for ($i=0;$i <= $debug->current_depth; $i++) { $ret .= '  '; }
-			$ret .= "-- Object Recursion Avoided -- \\\n";
-            return $ret;
+			$ret = " -- Object Recursion Avoided -- ";
+            return array( $class . ' [' . $id . ']'  => $ret);
         }
         if (in_array('object', $debug->options['avoid']))  {
             $debug->current_depth--;
-			for ($i=0;$i <= $debug->current_depth; $i++) { $ret .= '  '; }
-			$ret .= "-- Object Type Avoided -- \\\n";
-            return $ret;
+			$ret = " -- Object Type Avoided -- ";
+            return array( $class . ' [' . $id . ']'  => $ret);
         }
         if ($debug->current_depth > $debug->options['depth']) {
             $debug->current_depth--;
-			for ($i=0;$i <= $debug->current_depth; $i++) { $ret .= '  '; }
-			$ret .= "-- Debug Depth reached -- \\\n";
-            return $ret;
+			$ret = " -- Debug Depth reached -- ";
+            return array( $class . ' [' . $id . ']'  => $ret);
         }
         $debug->object_references[$hash] = true;
         $reflection = new \ReflectionObject($obj);
-        $props = '';
+        $props = array();
         foreach (array(
             'public' => \ReflectionProperty::IS_PUBLIC,
             'protected' => \ReflectionProperty::IS_PROTECTED,
             'private' => \ReflectionProperty::IS_PRIVATE
             ) as $type => $rule) {                
-                $props .= self::dump_properties($reflection, $obj, $type, $rule, $debug);
+                $props = array_merge($props, self::dump_properties($reflection, $obj, $type, $rule, $debug));
         }
         $debug->current_depth--;
-        if ($props == '') { 
-			for ($i=0;$i <= $debug->current_depth; $i++) { $ret .= '  '; }
-			return $ret .= " -- No properties -- \\\n";
+        if (empty($props)) {
+			return array( $class . ' [' . $id . ']'  => ' -- No properties -- ');
+		} else {
+			$ret = array_merge($ret, $props);
 		}
-        else  $ret .=  $props;
-        return  $ret;
+        return array( $class . ' [' . $id . ']'  => $ret);
     }
 
     public static function dump_properties($reflection, $obj, $type, $rule, $debug) {
         $vars = $reflection->getProperties($rule);
-        $i = 0; $ret = '';
+        $i = 0; $ret = array();
         foreach ($vars as $refProp) {
             $property = $refProp->getName();
             $i++;
             $refProp->setAccessible(true);
             $value = $refProp->getValue($obj);
-			for ($i=0;$i < $debug->current_depth; $i++) { $ret .= '  '; }
-            $ret .= '[ ' . $property . ' ][ ' . $type . ' ] => ';
+            $row = ' ' . $type . ' \'' . $property . '\'';
             if (in_array($property, $debug->options['blacklist']['property']))
-                $ret .= "-- Blacklisted Property Avoided -- \\\n";
-            else
-                $ret .= $debug->dump_it($value);
+                $ret[$row] = " -- Blacklisted Property Avoided -- ";
+            else {
+				$dump = $debug->dump_it($value);
+				if (is_string($dump))
+					$ret[$row] = $dump;
+				else {
+					$ret[$row] = $dump;
+					$ret = array_merge($ret, \array_slice($dump, 1));
+				}
+			}
         }
-        return $i ? $ret : '';
+        return $ret;
     }
 
     public static function dump_other($var) {
@@ -120,14 +143,12 @@ class Json {
 
     public static function locationString($location) {
         extract($location);
-        $ret = '{' .
-			'"line" : "' . $line . '",'.
-			'"file" : "' . $file . '",';
-        $ret .= isset($class) ? '"class" : "' . $class . '",' :'';
-        $ret .= isset($function) && $function != 'include' ? '"function" : "' . $function . '",' :'';
-		$res = substr($ret, 0, -1);
-		$res .= '}';
-        return $res;
+		$ret = new \stdClass();
+		$ret->line = $line;
+		$ret->file = $file;
+		if (isset($class)) $ret->class = $class;
+		if (isset($function) && $function != 'include') $ret->function = $function;
+        return $ret;
     }
 
 }
