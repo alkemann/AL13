@@ -17,7 +17,7 @@ class Debug {
             'key' => array()
         )
     );
-    
+
     protected static $__instance = null;
 
     public $current_depth;
@@ -28,7 +28,7 @@ class Debug {
 	/**
 	 * Get the singleton instance
 	 *
-	 * @return al13_debug\util\Debug 
+	 * @return al13_debug\util\Debug
 	 */
     public static function get_instance() {
         if (!static::$__instance) {
@@ -49,7 +49,7 @@ class Debug {
         $this->options = $options;
         $this->current_depth = 0;
         $this->object_references = array();
-        
+
         if (!$options['trace']) $options['trace'] = debug_backtrace();
         extract($options);
         $location = $this->location($trace);
@@ -84,7 +84,7 @@ class Debug {
 				$firephp->groupEnd();
 				return;
 				break;
-			case 'Json': 
+			case 'Json':
 				$locString = \al13_debug\util\adapters\Json::locationString($location);
 				$this->output[] = array('location' => $locString, 'dump' => $dump);
 				break;
@@ -134,7 +134,7 @@ class Debug {
 		}
 		$this->__out($key);
 	}
-	
+
 	private function __out($key = null) {
 		if ($key !== null) {
 			if (!isset($this->output[$key])) {
@@ -152,7 +152,7 @@ class Debug {
 	/**
 	 * Grab global defines, will start at 'FIRST_APP_CONSTANT', if defined
 	 *
-	 * @return type 
+	 * @return type
 	 */
     public function defines() {
         $defines = get_defined_constants();
@@ -176,7 +176,7 @@ class Debug {
 		$adapter = '\al13_debug\util\adapters\\'. $this->options['mode'];
         if (is_array($var))
             return $adapter::dump_array($var, $this);
-        elseif (is_object($var)) 
+        elseif (is_object($var))
             return $adapter::dump_object($var, $this);
         else
             return $adapter::dump_other($var);

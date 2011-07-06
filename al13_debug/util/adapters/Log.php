@@ -17,7 +17,7 @@ class Log {
         if ($count > 0) {
             if (in_array('array', $debug->options['avoid'])) {
                 $ret .= " -- Array Type Avoided -- \n";
-            } else 
+            } else
                 foreach ($array as $key => $value) {
 					for ($i=0;$i < $debug->current_depth; $i++) { $ret .= '  '; }
                     $ret .= '' . $key . ' => ';
@@ -37,7 +37,7 @@ class Log {
                 }
         }
         $debug->current_depth--;
-        return $ret;    
+        return $ret;
     }
 
     public static function dump_object($obj, $debug) {
@@ -77,11 +77,11 @@ class Log {
             'public' => \ReflectionProperty::IS_PUBLIC,
             'protected' => \ReflectionProperty::IS_PROTECTED,
             'private' => \ReflectionProperty::IS_PRIVATE
-            ) as $type => $rule) {                
+            ) as $type => $rule) {
                 $props .= self::dump_properties($reflection, $obj, $type, $rule, $debug);
         }
         $debug->current_depth--;
-        if ($props == '') { 
+        if ($props == '') {
 			for ($i=0;$i <= $debug->current_depth; $i++) { $ret .= '  '; }
 			return $ret .= " -- No properties -- \n";
 		}
