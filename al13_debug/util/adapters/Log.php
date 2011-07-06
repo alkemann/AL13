@@ -112,7 +112,7 @@ class Log {
         switch ($type) {
             case 'boolean': $var = $var ? 'true' : 'false'; break;
             case 'string' : $length = strlen($var); $var = '\'' . htmlentities($var) . '\' [' . $length . ']'; break;
-            case 'NULL' : return '[ NULL ]'; break;
+            case 'NULL' : return '[ NULL ]'. PHP_EOL; break;
         }
         return $var . ' (' . $type . ')' . "\n";
     }
