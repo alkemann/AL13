@@ -27,8 +27,8 @@ div.debug-dump {
  display: none;
 }
 .debug-dump ul { list-style: none; margin: 0; padding: 0 0 5px 1em; }
-.debug-dump ul.properties { border-left: 1px dashed #559; }
-.debug-dump ul.array { border-left: 1px dashed #955; }
+.debug-dump ul.properties { border-left: 1px dashed #559; margin: 0; padding: 0 0 5px 1em; }
+.debug-dump ul.array { border-left: 1px dashed #955; margin: 0; padding: 0 0 5px 1em; }
 div.debug-dump > ul { border: 0 !important; }
 .debug-dump li { padding: 0; margin: 0; list-style: none; }
 .debug-dump span { color: #B82830; }
