@@ -17,7 +17,7 @@ class FirePHP {
         if ($count > 0) {
             if (in_array('array', $debug->options['avoid'])) {
                 $ret[] = $indent . ' -- Array Type Avoided -- ';
-            } else 
+            } else
                 foreach ($array as $key => $value) {
 					if (!is_numeric($key)) $key = '\'' . $key . '\'';
                     $row = $indent . ' ' . $key . ' : ';
@@ -77,11 +77,11 @@ class FirePHP {
             'public' => \ReflectionProperty::IS_PUBLIC,
             'protected' => \ReflectionProperty::IS_PROTECTED,
             'private' => \ReflectionProperty::IS_PRIVATE
-            ) as $type => $rule) {                
+            ) as $type => $rule) {
                 $props = array_merge($props, self::dump_properties($reflection, $obj, $type, $rule, $debug));
         }
         $debug->current_depth--;
-        if (empty($props)) { 
+        if (empty($props)) {
 			$indent = ''; for ($i=0;$i <= $debug->current_depth; $i++) { $indent .= '_'; }
 			$ret[] = $indent . " -- No properties -- ";
 			return $ret;

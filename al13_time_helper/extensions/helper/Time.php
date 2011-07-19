@@ -20,17 +20,17 @@ use DateInterval;
  *
  * ##Convert examples:
  * {{{
- * echo $post->title .' created ' . $this->time->to('words', $post->created); 
+ * echo $post->title .' created ' . $this->time->to('words', $post->created);
  * // outputs: My first post created 1 week, 2 days ago
- * 
+ *
  * echo $this->time->to('nice', $post->modified);
  * // outputs: Fri, Dec 24th 2010, 10:34
- * 
+ *
  * echo $this->time->to('short', $comment->created);
  * // ouputs: Yesterday, 18:34
  * }}}
  * See docblock for complete list of types and options
- * 
+ *
  * ##Query examples:
  * {{{
  * // these return boolean
@@ -63,12 +63,12 @@ class Time extends \lithium\template\Helper {
 	 * @param array $options
 	 * @return boolean
 	 */
-	public function is($question, $date = null, array $options = array()) {	
+	public function is($question, $date = null, array $options = array()) {
 		switch ($question) {
-			case 'leap year' :	
+			case 'leap year' :
 				$date = $date ?: date('Y-m-d H:i:s');
 				$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
-				return $date->format('L');				
+				return $date->format('L');
 			default:
 				return $this->_relativeCheck($question, $date, $options);
 		}
@@ -89,7 +89,7 @@ class Time extends \lithium\template\Helper {
 	 * @param string $type
 	 * @param mixed $date string|int|null
 	 * @param array $options
-	 * @return string 
+	 * @return string
 	 */
 	public function to($type, $date = null, array $options = array()) {
 		$defaults = array('format' => 'j/n/y');
@@ -126,9 +126,9 @@ class Time extends \lithium\template\Helper {
 			case 'relative':
 			default:
 				return $this->_words($date, $options);
-		}	
+		}
 	}
-		
+
 	/**
 	 * Format a date using the DateTime native PHP class
 	 *
@@ -136,7 +136,7 @@ class Time extends \lithium\template\Helper {
 	 * @param mixed $data string|int|null
 	 * @return string
 	 */
-	public function format($format, $date = null) {		
+	public function format($format, $date = null) {
 		$date = $date ?: date('Y-m-d H:i:s');
 		$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
 		return $date->format($format);
@@ -153,10 +153,10 @@ class Time extends \lithium\template\Helper {
 		switch ($question) {
 			case 'today' :
 				return $date->format('dmy') == $now->format('dmy');
-			case 'tomorrow' :	
+			case 'tomorrow' :
 				$now->add(DateInterval::createFromDateString('1 day'));
 				return $date->format('dmy') == $now->format('dmy');
-			case 'yesterday' :	
+			case 'yesterday' :
 				$now->add(DateInterval::createFromDateString('-1 day'));
 				return $date->format('dmy') == $now->format('dmy');
 			case 'this week' :
@@ -165,11 +165,11 @@ class Time extends \lithium\template\Helper {
 				return $date->format('my') == $now->format('my');
 			case 'this year' :
 				return $date->format('y') == $now->format('y');
-		}	
+		}
 		throw new Exception('Illegal $question parameter');
 		return null;
 	}
-	
+
 	/**
 	 * Format date to 'D, M jS Y, H:i'
 	 *
@@ -186,7 +186,7 @@ class Time extends \lithium\template\Helper {
 		}
 		return $date->format('D, M jS Y, H:i');
 	}
-		
+
 	/**
 	 * Format date to "M jS y, H:i", or 'Today, H:i' or similar
 	 *
@@ -198,7 +198,7 @@ class Time extends \lithium\template\Helper {
 		$now = new DateTime();
 		$date = $date ?: date('Y-m-d H:i:s');
 		$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
-	
+
 		if ($offset) {
 			$date->add(DateInterval::createFromDateString("{$offset} hours"));
 		}
@@ -220,7 +220,7 @@ class Time extends \lithium\template\Helper {
 				$text = 'Tomorrow, %s';
 				$format = 'H:i';
 			break;
-			default : 
+			default :
 				$text = null;
 				$format = "M jS{$y}, H:i";
 		}
@@ -228,7 +228,7 @@ class Time extends \lithium\template\Helper {
 
 		return ($text) ? sprintf($text, $ret) : $ret;
 	}
-	
+
 	/**
 	 * Convert date to relative worded string like "1 week, 2 days ago"
 	 *
@@ -247,11 +247,11 @@ class Time extends \lithium\template\Helper {
 
 		$date = $date ?: date('Y-m-d H:i:s');
 		$date = new DateTime(is_int($date) ? date('Y-m-d H:i:s', $date) : $date);
-		
+
 		if ($now == $date) {
 			return 'now';
 		}
-		
+
 		$keys = $this->_diff($date, compact('now') + $options);
 
 		if ($end = $options['end']) {

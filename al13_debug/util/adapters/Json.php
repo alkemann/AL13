@@ -9,11 +9,11 @@ namespace al13_debug\util\adapters;
  * into json_encode. Suggested use for Lithium is for json
  * by inserting the debug dump in the media handler, as per
  * a dout() in an html layout. Example:
- * 
+ *
  * {{{
  * /// app/config/bootstrap/media.php
  * use lithium\net\http\Media;
- * 
+ *
  * 	Media::type('json', 'application/json', array(
  * 		'cast' => true,
  * 		'layout' => '{:library}/views/layouts/default.json.php',
@@ -33,7 +33,7 @@ namespace al13_debug\util\adapters;
  * 		}
  * 	));
  * }}}
- * 
+ *
  */
 class Json {
 
@@ -44,7 +44,7 @@ class Json {
         if ($count > 0) {
             if (in_array('array', $debug->options['avoid'])) {
                 $ret[] = ' -- Array Type Avoided -- ';
-            } else 
+            } else
                 foreach ($array as $key => $value) {
 					if (!is_numeric($key)) $key = '\'' . $key . '\'';
                     if (is_string($key) && in_array($key, $debug->options['blacklist']['key'])) {
@@ -95,7 +95,7 @@ class Json {
             'public' => \ReflectionProperty::IS_PUBLIC,
             'protected' => \ReflectionProperty::IS_PROTECTED,
             'private' => \ReflectionProperty::IS_PRIVATE
-            ) as $type => $rule) {                
+            ) as $type => $rule) {
                 $props = array_merge($props, self::dump_properties($reflection, $obj, $type, $rule, $debug));
         }
         $debug->current_depth--;
