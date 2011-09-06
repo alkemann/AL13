@@ -11,6 +11,7 @@ class Debug {
         'mode' => 'Html',
         'depth' => 10,
         'avoid' => array(),
+        'docroot' => '/web',
         'blacklist' => array(
             'class' => array(),
             'property' => array(),
@@ -189,7 +190,7 @@ class Debug {
 	 * @return array
 	 */
     public function location($trace) {
-		$root = substr($_SERVER['DOCUMENT_ROOT'], 0 , strlen('app/webroot') * -1);
+        $root = substr($_SERVER['DOCUMENT_ROOT'], 0 , strlen(static::$defaults['docroot']) * -1);
         $file = implode('/', array_diff(explode('/', $trace[0]['file']), explode('/', $root)));
         $ret = array(
             'file' => $file,
@@ -198,7 +199,7 @@ class Debug {
         if (isset($trace[1]['function'])) $ret['function'] = $trace[1]['function'];
         if (isset($trace[1]['class'])) $ret['class'] = $trace[1]['class'];
         return $ret;
-	}
+    }
 
     public function trace() {
 	$root = substr($_SERVER['DOCUMENT_ROOT'], 0 , strlen(static::$defaults['docroot']) * -1);
