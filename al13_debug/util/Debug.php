@@ -200,4 +200,23 @@ class Debug {
         return $ret;
 	}
 
+    public function trace() {
+	$root = substr($_SERVER['DOCUMENT_ROOT'], 0 , strlen(static::$defaults['docroot']) * -1);
+        $trace = debug_backtrace();
+        array_unshift($trace, array());
+        $arr = array();
+        foreach ($trace as $k => $one) {
+            $arr[$k] = array();
+            if (isset($one['file'])) {
+                $file = implode('/', array_diff(explode('/', $one['file']), explode('/', $root)));
+                $arr[$k]['file'] = $file;
+            }
+            if (isset($one['line'])) $arr[$k]['line'] = $one['line'];
+            if (isset($one['class'])) $arr[$k-1]['class'] = $one['class'];
+            if (isset($one['function'])) $arr[$k-1]['function'] = $one['function'];
+        }
+        array_shift($arr);
+        array_shift($arr);
+        d($arr);
+    }
 }
