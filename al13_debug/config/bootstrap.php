@@ -41,7 +41,7 @@ function dd() {
         $args = $args[0];
     }
 	$echo = true;
-    ob_end_clean();
+    @ob_end_clean();
     $debug->dump($args, compact('trace', 'split', 'echo'));
 	if (!empty($debug->output)) {
 		dout();

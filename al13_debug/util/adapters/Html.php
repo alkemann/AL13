@@ -15,7 +15,7 @@ class Html {
             $ret .= '<ul class="array">';
             if (in_array('array', $debug->options['avoid'])) {
                 $ret .= '<li><span class="empty"> -- Array Type Avoided -- </span></li>';
-            } else 
+            } else
                 foreach ($array as $key => $value) {
                     $ret .= '<li>[ <span class="key">' . $key . '</span> ] => ';
                     if (is_string($key) && in_array($key, $debug->options['blacklist']['key'])) {
@@ -33,7 +33,7 @@ class Html {
             $ret .= '</ul>';
         }
         $debug->current_depth--;
-        return $ret;    
+        return $ret;
     }
 
     public static function dump_object($obj, $debug) {
@@ -67,7 +67,7 @@ class Html {
             'public' => \ReflectionProperty::IS_PUBLIC,
             'protected' => \ReflectionProperty::IS_PROTECTED,
             'private' => \ReflectionProperty::IS_PRIVATE
-            ) as $type => $rule) {                
+            ) as $type => $rule) {
                 $props .= self::dump_properties($reflection, $obj, $type, $rule, $debug);
         }
         $debug->current_depth--;

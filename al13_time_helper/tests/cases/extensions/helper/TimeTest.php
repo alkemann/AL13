@@ -37,19 +37,19 @@ class TimeTest extends \lithium\test\Unit {
 	public function tearDown() {
 		unset($this->time);
 	}
-	
+
 	public function testIs() {
 		$time = time();
 		$this->assertTrue( $this->time->is('today', $time) );
 		$this->assertFalse( $this->time->is('tomorrow', $time) );
 		$this->assertFalse( $this->time->is('yesterday', $time) );
-		
+
 		$time = time() + Time::DAY;
 		$this->assertTrue( $this->time->is('tomorrow', $time) );
 		$this->assertFalse( $this->time->is('today', $time) );
 		$this->assertFalse( $this->time->is('yesterday', $time) );
-		
-		
+
+
 		$time = time() - Time::DAY;
 		$this->assertTrue( $this->time->is('yesterday', $time) );
 		$this->assertFalse( $this->time->is('tomorrow', $time) );
@@ -58,21 +58,21 @@ class TimeTest extends \lithium\test\Unit {
 		$time = time();
 		$this->assertTrue( $this->time->is('this week', $time) );
 		$this->assertFalse( $this->time->is('this week', 1) );
-		
+
 		$this->assertTrue( $this->time->is('this month', $time) );
 		$this->assertFalse( $this->time->is('this month', 1) );
-		
+
 		$this->assertTrue( $this->time->is('this year', $time) );
 		$this->assertFalse( $this->time->is('this year', 1) );
 	}
-	
+
 	public function testFormat() {
 		$time = time();
 		$date = date('Y-m-d H:i:s', $time);
 		$expected = date('YMHi', $time);
 		$result = $this->time->format('YMHi', $date);
 		$this->assertIdentical( $expected, $result );
-		
+
 		$format = 'D-M-Y';
 		$arr = array(time(), strtotime('+1 days'), strtotime('+1 days'), strtotime('+0 days'));
 
@@ -80,7 +80,7 @@ class TimeTest extends \lithium\test\Unit {
 			$this->assertEqual(date($format, $val), $this->time->format($format, $val));
 		}
 	}
-	
+
 	public function testToNice() {
 		$time = time() + (2 * Time::DAY);
 		$this->assertEqual(date('D, M jS Y, H:i', $time), $this->time->to('nice', $time));
@@ -96,17 +96,17 @@ class TimeTest extends \lithium\test\Unit {
 
 		$time = null;
 		$this->assertEqual(date('D, M jS Y, H:i', time()), $this->time->to('nice', $time));
-		
+
 		$time = date('H:i', time());
 		$expected = 'Fri, Dec 24th 2010, '.$time;
 		$result = $this->time->to('nice', '2010-12-24 '.$time.':00');
 		$this->assertEqual($expected, $result);
-		
+
 		$expected = 'Sat, Dec 25th 2010, '.$time;
 		$result = $this->time->to('nice', '2010-12-24 '.$time.':00', array('offset' => 24));
 		$this->assertEqual($expected, $result);
 	}
-	
+
 	public function testNiceShort() {
 		$time = time() + 2 * Time::DAY;
 		if (date('Y', $time) == date('Y')) {
@@ -117,7 +117,7 @@ class TimeTest extends \lithium\test\Unit {
 
 		$time = time();
 		$this->assertEqual('Today, '.date('H:i', $time), $this->time->to('short', $time));
-		
+
 		$time = time() + Time::DAY;
 		$this->assertEqual('Tomorrow, '.date('H:i', $time), $this->time->to('short', $time));
 
@@ -134,13 +134,13 @@ class TimeTest extends \lithium\test\Unit {
 		$time += Time::DAY;
 		$this->assertEqual($time, $this->time->to('Unix', date('Y-m-d H:i:s', $time)));
 	}
-	
+
 	public function testToWords() {
 		$time = time() - 2 * Time::DAY;
 		$expected = "2 days ago";
 		$result = $this->time->to('words',$time);
 		$this->assertEqual($expected, $result);
-		
+
 		$result = $this->time->to('words','2007-9-25');
 		$this->assertEqual($result, 'on 25/9/07');
 
