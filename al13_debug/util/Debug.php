@@ -45,7 +45,7 @@ class Debug {
 	 * @param array $options
 	 */
     public function dump($var, $options = array()) {
-        $options += self::$defaults + array('split' => false);
+        $options += self::$defaults + array('split' => false, 'trace' => false);
         $this->options = $options;
         $this->current_depth = 0;
         $this->object_references = array();
