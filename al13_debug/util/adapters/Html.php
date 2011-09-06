@@ -122,20 +122,20 @@ class Html {
         return $ret;
     }
 
-	public static function top(array $outputs, $key = null) {
-		if (empty($outputs)) return;
-		echo '<div id="debugger">';
-		if ($key !== null) {
-			if (!isset($outputs[$key])) {
-				throw new Exception('DEBUG: Not that many outputs in buffer');
-			}
-			echo $outputs[$key];
-			return;
-		}
-		foreach ($outputs as $out) {
-			echo $out;
-		}
-		echo '</div>';
-	}
+    public static function top(array $outputs, $key = null) {
+            if (empty($outputs)) return;
+            echo '<div id="debugger">';
+            if ($key !== null) {
+                    if (!isset($outputs[$key])) {
+                            throw new Exception('DEBUG: Not that many outputs in buffer');
+                    }
+                    echo $outputs[$key];
+                    return;
+            }
+            foreach ($outputs as $out) {
+                    echo $out;
+            }
+            echo '</div>';
+    }
 
 }
