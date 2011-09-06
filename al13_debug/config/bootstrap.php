@@ -6,10 +6,12 @@
 use al13_debug\util\Debug;
 
 // Li3 specific code for loading defaults, disable if not used with Li3
+/*
 $config = lithium\core\Libraries::get('al13_debug');
 if (isset($config['defaults']) && !empty($config['defaults'])) {
 	Debug::$defaults = $config['defaults'] + Debug::$defaults;
 }
+*/
 
 /**
  * Dump any amount of paramters in a html styled var_dump
