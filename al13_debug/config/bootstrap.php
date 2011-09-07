@@ -50,6 +50,15 @@ function dd() {
 }
 
 /**
+ * Inspect an object for it's properties and methods
+ *
+ * @param object $classOrObject
+ */
+function dapi($classOrObject) {
+    $debug = Debug::get_instance();
+    dd($debug->api($classOrObject));
+}
+/**
  * Convenient way of adding / setting a Debug setting
  * 
  * @param string $setting Name/Key of Debug config/setting to set

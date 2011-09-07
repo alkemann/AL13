@@ -220,4 +220,102 @@ class Debug {
         array_shift($arr);
         d($arr);
     }
+
+    public function api($var) {
+        if (is_object($var)) {
+            $class = get_class($var);
+            $obj = $var;
+        } else {
+            if (!class_exists($var)) {
+                throw new \Exception('Class ['.$var.'] doesn\'t exist');
+            }
+            $class = $var;
+            try {
+                $obj = new $class();
+            } catch (\Exception $e) {
+                throw new \Exception('Debug::api could not instantiate ['.$var.'], send it an object.');
+            }
+        }
+        $reflection = new \ReflectionObject($obj);
+        $properties = array();
+        foreach (array(
+            'public' => \ReflectionProperty::IS_PUBLIC,
+            'protected' => \ReflectionProperty::IS_PROTECTED,
+            'private' => \ReflectionProperty::IS_PRIVATE
+            ) as $access => $rule) {
+                $vars = $reflection->getProperties($rule);
+                foreach ($vars as $refProp) {
+                    $property = $refProp->getName();
+                    $refProp->setAccessible(true);
+                    $value = $refProp->getValue($obj);
+                    $type = gettype($value);
+                    if (is_object($value)) {
+                        $value = get_class($value);
+                    } elseif (is_array($value)) {
+                        $value = 'array['.count($value).']';
+                    }
+
+                    $properties[$access][$property] = compact('value', 'type');
+                }
+        }
+        $constants = $reflection->getConstants();
+
+        $methods = array();
+
+        foreach (array(
+            'public' => \ReflectionMethod::IS_PUBLIC,
+            'protected' => \ReflectionMethod::IS_PROTECTED,
+            'private' => \ReflectionMethod::IS_PRIVATE
+            ) as $access => $rule) {
+                $refMethods = $reflection->getMethods($rule);
+                foreach ($refMethods as $refMethod) {
+                    $refParams = $refMethod->getParameters();
+                    $params = array();
+                    foreach ($refParams as $refParam) {
+                        $params[] = $refParam->getName();
+                    }/*
+                    $required = $refMethod->getNumberOfRequiredParameters();
+                    $requiredParams = array();
+                    for ($i=0;$i<$required;$i++) {
+                        $requiredParams[] = array_shift($params);
+                    }*/
+                    $method_name = $refMethod->getName();
+
+                    $string = $access .' function '.$method_name.'(';
+                    $paramString = '';
+                    foreach ($params as $p) {
+                        $paramString .= '$'.$p.', ';
+                    }
+                    $paramString  = substr($paramString,0,-2);
+                    $string .= $paramString;
+                    $string .= ')';
+
+                    $comment = $refMethod->getDocComment();
+                    $comment = trim(preg_replace('/^(\s*\/\*\*|\s*\*{1,2}\/|\s*\* ?)/m', '', $comment));
+                    $comment = str_replace("\r\n", "\n", $comment);
+                    $commentParts = explode('@', $comment);
+                    $description = array_shift($commentParts);
+                    $tags = array();
+                    foreach ($commentParts as $part) {
+                        $tagArr = explode(' ', $part, 2);
+                        if ($tagArr[0] == 'param') {
+                            $paramArr = preg_split("/[\s\t]+/", $tagArr[1]);
+                            $type = array_shift($paramArr);
+                            if (empty($type)) $type = array_shift($paramArr);
+                            $name = array_shift($paramArr);
+                            $info = implode(' ', $paramArr);
+                            $tags['param'][$name] = compact('type', 'info');
+                        } else {
+                            $tags[$tagArr[0]] = isset($tagArr[1])?$tagArr[1]:'';
+                        }
+                    }
+
+
+                    $methods[$access][$string] = compact('description', 'tags');
+                }
+        }
+
+        return compact('properties', 'constants' ,'methods');
+    }
+
 }
