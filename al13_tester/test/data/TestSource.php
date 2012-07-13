@@ -205,7 +205,7 @@ class TestSource extends \lithium\data\Source {
 	 * @param null $meta
 	 * @return array
 	 */
-	public function describe($entity, $meta = null) {
+	public function describe($entity, array $meta = array()) {
 		if (isset($this->__schemas[$entity])) {
 			return $this->__schemas[$entity];
 		}
@@ -270,6 +270,17 @@ class TestSource extends \lithium\data\Source {
 	public function item($model, array $data = array(), array $options = array()) {
 		return new \lithium\data\model\Record(compact('model', 'data') + $options);
 	}
+
+	/**
+	 * Returns a list of objects (sources) that models can bind to, i.e. a list of tables in the
+	 * case of a database, or REST collections, in the case of a web service.
+	 *
+	 * @param string $class The fully-name-spaced class name of the object making the request.
+	 * @return array Returns an array of objects to which models can connect.
+	 */
+	public function sources($class = null) {
+            return array_keys($this->__data);
+        }
 /********/
 
 	public function relationship($class, $type, $name, array $options = array()) {
