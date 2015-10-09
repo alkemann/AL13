@@ -202,14 +202,17 @@ class Debug {
     }
 
     public function trace() {
-	$root = substr($_SERVER['DOCUMENT_ROOT'], 0 , strlen(static::$defaults['docroot']) * -1);
+        $root = substr($_SERVER['DOCUMENT_ROOT'], 0 , strlen(static::$defaults['docroot']) * -1);
         $trace = debug_backtrace();
         array_unshift($trace, array());
         $arr = array();
         foreach ($trace as $k => $one) {
             $arr[$k] = array();
             if (isset($one['file'])) {
-                $file = implode('/', array_diff(explode('/', $one['file']), explode('/', $root)));
+
+                $full_file = $one['file'];
+                $file = implode('/', array_diff(explode('/', $full_file), explode('/', $root)));
+
                 $arr[$k]['file'] = $file;
             }
             if (isset($one['line'])) $arr[$k]['line'] = $one['line'];
@@ -218,7 +221,7 @@ class Debug {
         }
         array_shift($arr);
         array_shift($arr);
-        d($arr);
+        return $arr;
     }
 
     public function api($var) {

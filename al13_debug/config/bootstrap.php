@@ -30,6 +30,27 @@ function d() {
     $debug->dump($args, compact('trace', 'split'));
 };
 
+/**
+ * Dump any amount of parameters in a html styled var_dump with trace
+ *
+ * @param mixed any amount
+ */
+function dt() {
+    $debug = Debug::get_instance();
+    $args = func_get_args();
+    $trace = debug_backtrace();
+    $split = true;
+
+    @ob_end_clean();
+    $debug_trace = $debug->trace();
+    foreach ($debug_trace as $t) {
+        @$traced[] = (empty($t['class'])?$t['file']:$t['class']).'::'.$t['function'].'::'.$t['line'];
+    }
+    $args[] = $traced;
+    $debug->dump($args, compact('trace', 'split'));
+};
+
+
 // Debug dump any amount of variables and then die()
 function dd() {
     $debug = Debug::get_instance();
@@ -46,6 +67,25 @@ function dd() {
 	if (!empty($debug->output)) {
 		dout();
 	}
+    die('<div style="margin-top: 25px;font-size: 10px;color: #500;">-Debug die-</div>');
+}
+
+function ddt() {
+    $debug = Debug::get_instance();
+    $args = func_get_args();
+    $trace = debug_backtrace();
+    $split = true;
+    $echo = true;
+    @ob_end_clean();
+    $debug_trace = $debug->trace();
+    foreach ($debug_trace as $t) {
+        @$traced[] = (empty($t['class'])?$t['file']:$t['class']).'::'.$t['function'].'::'.$t['line'];
+    }
+    $args[] = $traced;
+    $debug->dump($args, compact('trace', 'split', 'echo'));
+    if (!empty($debug->output)) {
+        dout();
+    }
     die('<div style="margin-top: 25px;font-size: 10px;color: #500;">-Debug die-</div>');
 }
 
@@ -157,3 +197,5 @@ function daout($key = null) {
     $debug = Debug::get_instance();
 	return $debug->array_out($key);
 }
+
+ds('echo', false);
